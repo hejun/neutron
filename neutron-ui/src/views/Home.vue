@@ -1,22 +1,42 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useSettingsStore } from '@/store'
 import { useAuthStore } from '@/store'
 
-const REQUEST_PREFIX = import.meta.env.VITE_REQUEST_PREFIX || ''
+const router = useRouter()
+const settingsStore = useSettingsStore()
 const authStore = useAuthStore()
 
-const loginUserRef = ref<string>()
+const toggleCollapse = () => settingsStore.toggleCollapse()
 
-if (authStore.isAuthorized) {
-  fetch(`${REQUEST_PREFIX}/userinfo`, {
-    method: 'POST',
-    headers: { Authorization: `${authStore.token?.tokenType} ${authStore.token?.accessToken}` }
-  })
-    .then(res => res.json())
-    .then(res => loginUserRef.value = res.sub)
+const toggleTheme = () => settingsStore.toggleTheme()
+
+const destroy = () => {
+  authStore.destroyToken()
+  router.replace('/callback')
 }
 </script>
 
 <template>
-  <div>{{ loginUserRef }}</div>
+  <VLayout>
+    <VAppBar elevation="0" border>
+      <template v-slot:prepend>
+        <VAppBarNavIcon @click.native="toggleCollapse" />
+      </template>
+      <VAppBarTitle>Neutron</VAppBarTitle>
+      <template v-slot:append>
+        <VBtn
+          :icon="settingsStore.theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+          @click="toggleTheme"
+        />
+        <VDivider vertical class="mx-4" />
+        <VBtn prepend-icon="mdi-logout" type="button" @click="destroy">Logout</VBtn>
+      </template>
+    </VAppBar>
+    <VMain>
+      <VNavigationDrawer :model-value="settingsStore.collapsed">
+        <VList nav></VList>
+      </VNavigationDrawer>
+    </VMain>
+  </VLayout>
 </template>

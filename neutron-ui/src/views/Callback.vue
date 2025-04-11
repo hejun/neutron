@@ -68,16 +68,11 @@ const doObtainToken = () => {
       router.replace(url)
     })
 }
-
-const destroy = () => {
-  authStore.destroyToken()
-}
 </script>
 
 <template>
   <div>
     <VBtn prepend-icon="mdi-login" @click="doOAuthLogin">OAuthLogin</VBtn>
     <VBtn prepend-icon="mdi-account-arrow-down" @click="doObtainToken">ObtainToken</VBtn>
-    <VBtn prepend-icon="mdi-logout" type="button" @click="destroy">Destroy</VBtn>
   </div>
 </template>
