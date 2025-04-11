@@ -76,8 +76,8 @@ const destroy = () => {
 
 <template>
   <div>
-    <button type="button" @click="doOAuthLogin">OAuthLogin</button>
-    <button type="button" @click="doObtainToken">ObtainToken</button>
-    <button type="button" @click="destroy">Destroy</button>
+    <VBtn prepend-icon="mdi-login" @click="doOAuthLogin">OAuthLogin</VBtn>
+    <VBtn prepend-icon="mdi-account-arrow-down" @click="doObtainToken">ObtainToken</VBtn>
+    <VBtn prepend-icon="mdi-logout" type="button" @click="destroy">Destroy</VBtn>
   </div>
 </template>
