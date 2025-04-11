@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/store'
 import { enc, SHA256 } from 'crypto-js'
@@ -11,6 +12,23 @@ const REQUEST_PREFIX = import.meta.env.VITE_REQUEST_PREFIX || ''
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID || ''
 const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI || ''
 const SCOPE = import.meta.env.VITE_SCOPE || ''
+
+const { error, error_description, code, state } = route.query
+
+const hasError = ref(false)
+const headlineIcon = ref('mdi-account-key-outline')
+const title = ref('You need to sign in')
+const text = ref()
+
+if (error) {
+  hasError.value = true
+  headlineIcon.value = 'mdi-account-alert-outline'
+  title.value = error as string
+  text.value = error_description as string
+} else if (code) {
+  headlineIcon.value = 'mdi-account-check-outline'
+  title.value = 'Sign in success'
+}
 
 const doOAuthLogin = () => {
   const { oauthCallback } = route.query
@@ -26,17 +44,22 @@ const doOAuthLogin = () => {
 }
 
 const doObtainToken = () => {
-  const { code, state } = route.query
   if (!code) {
-    console.error('Code 不存在')
+    hasError.value = true
+    headlineIcon.value = 'mdi-alert-circle-outline'
+    title.value = 'Param: Code is not exists'
   }
   if (!authStore.authentication) {
-    console.error('认证信息不存在')
+    hasError.value = true
+    headlineIcon.value = 'mdi-alert-circle-outline'
+    title.value = 'Param: Authentication info is not exists'
   }
   const codeVerify = authStore.authentication!.codeVerify!
   authStore.destroyCodeVerify()
   if (!codeVerify) {
-    console.error('CodeVerify不存在')
+    hasError.value = true
+    headlineIcon.value = 'mdi-alert-circle-outline'
+    title.value = 'Param: CodeVerify info is not exists'
   }
 
   const url = `${REQUEST_PREFIX}/oauth2/token`
@@ -68,11 +91,25 @@ const doObtainToken = () => {
       router.replace(url)
     })
 }
+
+const backHome = () => {
+  hasError.value = false
+  headlineIcon.value = 'mdi-account-key-outline'
+  title.value = 'You need to sign in'
+  text.value = undefined
+  router.replace('/')
+}
 </script>
 
 <template>
-  <div>
-    <VBtn prepend-icon="mdi-login" @click="doOAuthLogin">OAuthLogin</VBtn>
-    <VBtn prepend-icon="mdi-account-arrow-down" @click="doObtainToken">ObtainToken</VBtn>
-  </div>
+  <VEmptyState :title="title" :text="text">
+    <template #headline>
+      <VIcon :icon="headlineIcon" :color="hasError ? 'red-darken-2' : undefined" />
+    </template>
+    <template #actions>
+      <VBtn v-if="!code" color="blue" prepend-icon="mdi-login" @click="doOAuthLogin">Sign in</VBtn>
+      <VBtn v-if="code" color="blue" prepend-icon="mdi-account-arrow-down" @click="doObtainToken">Obtain Token</VBtn>
+      <VBtn v-if="hasError" color="white" prepend-icon="mdi-home-outline" @click="backHome">Back Home</VBtn>
+    </template>
+  </VEmptyState>
 </template>
