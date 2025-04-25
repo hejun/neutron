@@ -12,6 +12,17 @@ spring:
       on-profile: dev
   thymeleaf:
     cache: false
+  jackson:
+    time-zone: GMT+8
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.2.2:3306/neutron?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&allowMultiQueries=true
+    username: root
+    password: Hj1234
+    hikari:
+      connection-test-query: "SELECT 1"
+  jpa:
+    show-sql: true
 ---
 spring:
   config:
