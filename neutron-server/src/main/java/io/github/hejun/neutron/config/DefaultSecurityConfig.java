@@ -41,6 +41,9 @@ public class DefaultSecurityConfig {
 				logout
 					.logoutRequestMatcher(new AntPathRequestMatcher("/logout", HttpMethod.GET.name()))
 					.logoutSuccessHandler(createLogoutSuccessHandler())
+			)
+			.oauth2ResourceServer(oauth2ResourceServer ->
+				oauth2ResourceServer.jwt(Customizer.withDefaults())
 			);
 		return http.build();
 	}
