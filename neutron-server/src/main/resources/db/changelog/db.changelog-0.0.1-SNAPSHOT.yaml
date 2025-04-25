@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0.0.1-SNAPSHOT
+      author: hejun.dev@qq.com
+      changes:
+        - createTable:
+            tableName: t_tenant
+            remarks: "租户"
+            columns:
+              - column:
+                  name: id
+                  type: varchar(32)
+                  remarks: "ID"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  remarks: "名称"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: bit(1)
+                  remarks: "是否启用, 0: 否, 1: 是. 默认: 1"
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: true
+              - column:
+                  name: create_date
+                  type: timestamp
+                  remarks: "创建时间"
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: last_modified_date
+                  type: timestamp
+                  remarks: "最后更新时间"
