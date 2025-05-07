@@ -13,8 +13,8 @@
     }
   },
   "include": [
-    "vite.config.ts",
     "env.d.ts",
+    "vite.config.ts",
     "src/**/*.ts",
     "src/**/*.vue",
     "src/**/*.tsx"
