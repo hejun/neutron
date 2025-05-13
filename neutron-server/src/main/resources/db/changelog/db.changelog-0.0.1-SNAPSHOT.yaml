@@ -15,6 +15,14 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
+                  name: code
+                  type: varchar(20)
+                  remarks: "代码"
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uk_tenant_code
+              - column:
                   name: name
                   type: varchar(50)
                   remarks: "名称"

@@ -1,10 +1,7 @@
 package io.github.hejun.neutron.entity;
 
 import io.github.hejun.neutron.annotations.GeneratedUUID;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,12 +17,17 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "t_tenant")
+@Table(name = "t_tenant", uniqueConstraints = {
+	@UniqueConstraint(name = "uk_tenant_code", columnNames = {"code"})
+})
 public class Tenant {
 
 	@Id
 	@GeneratedUUID
 	private String id;
+
+	@Column(nullable = false)
+	private String code;
 
 	@Column(nullable = false)
 	private String name;

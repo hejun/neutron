@@ -13,6 +13,8 @@ public interface ITenantService {
 
 	Page<Tenant> findPage(Tenant tenant, Pageable pageable);
 
+	Tenant findByCode(String code);
+
 	Tenant findById(String id);
 
 	Tenant save(Tenant tenant);

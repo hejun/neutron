@@ -34,6 +34,9 @@ public class TenantServiceImpl implements ITenantService {
 		Specification<Tenant> spec = (root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			if (tenant != null) {
+				if (StringUtils.isNotBlank(tenant.getCode())) {
+					predicates.add(criteriaBuilder.like(root.get("code"), "%" + tenant.getCode() + "%"));
+				}
 				if (StringUtils.isNotBlank(tenant.getName())) {
 					predicates.add(criteriaBuilder.like(root.get("name"), "%" + tenant.getName() + "%"));
 				}
@@ -46,6 +49,14 @@ public class TenantServiceImpl implements ITenantService {
 		pageable = PageRequest
 			.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createDate");
 		return tenantRepository.findAll(spec, pageable);
+	}
+
+	@Override
+	public Tenant findByCode(String code) {
+		if (StringUtils.isBlank(code)) {
+			return null;
+		}
+		return tenantRepository.findByCode(code).orElse(null);
 	}
 
 	@Override

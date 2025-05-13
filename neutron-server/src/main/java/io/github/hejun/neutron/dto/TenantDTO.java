@@ -19,6 +19,10 @@ public class TenantDTO {
 
 	private String id;
 
+	@NotBlank(message = "代码不可为空")
+	@Size(min = 2, max = 20, message = "代码应在2-20个字之间")
+	private String code;
+
 	@NotBlank(message = "名称不可为空")
 	@Size(min = 2, max = 50, message = "名称应在2-50个字之间")
 	private String name;
