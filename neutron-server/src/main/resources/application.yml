@@ -28,6 +28,10 @@ neutron:
     tenant:
       code: neutron
       name: Neutron
+    client:
+      client-id: neutron
+      client-name: Neutron
+      redirect-uri: http://localhost:5173/callback
 ---
 spring:
   config:

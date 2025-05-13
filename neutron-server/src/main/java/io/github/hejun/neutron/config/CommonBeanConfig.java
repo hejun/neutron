@@ -1,25 +1,21 @@
 package io.github.hejun.neutron.config;
 
+import io.github.hejun.neutron.conveter.ClientConverter;
+import io.github.hejun.neutron.entity.Client;
+import io.github.hejun.neutron.service.IClientService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import java.util.UUID;
 
 /**
  * 公用Bean配置
@@ -44,22 +40,31 @@ public class CommonBeanConfig {
 	}
 
 	@Bean
-	public RegisteredClientRepository registeredClientRepository() {
-		RegisteredClient client = RegisteredClient
-			.withId(UUID.randomUUID().toString().replaceAll("-", ""))
-			.clientId("neutron")
-			.clientName("Neutron")
-			.clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
-			.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-			.redirectUri("http://localhost:5173/callback")
-			.scope(OidcScopes.OPENID)
-			.scope(OidcScopes.PROFILE)
-			.clientSettings(ClientSettings.builder()
-				.requireProofKey(true)
-				.requireAuthorizationConsent(true)
-				.build())
-			.build();
-		return new InMemoryRegisteredClientRepository(client);
+	public RegisteredClientRepository registeredClientRepository(IClientService clientService,
+																 ClientConverter clientConverter) {
+		return new RegisteredClientRepository() {
+			@Override
+			public void save(RegisteredClient registeredClient) {
+			}
+
+			@Override
+			public RegisteredClient findById(String id) {
+				Client client = clientService.findById(id);
+				if (client != null) {
+					return clientConverter.toRegisteredClient(client);
+				}
+				return null;
+			}
+
+			@Override
+			public RegisteredClient findByClientId(String clientId) {
+				Client client = clientService.findByClientId(clientId);
+				if (client != null) {
+					clientConverter.toRegisteredClient(client);
+				}
+				return null;
+			}
+		};
 	}
 
 	@Bean

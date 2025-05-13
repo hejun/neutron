@@ -1,7 +1,10 @@
 package io.github.hejun.neutron.config;
 
+import io.github.hejun.neutron.entity.Client;
 import io.github.hejun.neutron.entity.Tenant;
+import io.github.hejun.neutron.properties.init.InitializeClientProperties;
 import io.github.hejun.neutron.properties.init.InitializeTenantProperties;
+import io.github.hejun.neutron.service.IClientService;
 import io.github.hejun.neutron.service.ITenantService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +13,9 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
 
 /**
  * 初始化配置
@@ -22,7 +28,9 @@ import org.springframework.context.annotation.Configuration;
 public class InitializeConfig implements ApplicationListener<ApplicationStartedEvent> {
 
 	private final InitializeTenantProperties initializeTenantProperties;
+	private final InitializeClientProperties initializeClientProperties;
 	private final ITenantService tenantService;
+	private final IClientService clientService;
 
 	@Override
 	public void onApplicationEvent(ApplicationStartedEvent event) {
@@ -35,6 +43,21 @@ public class InitializeConfig implements ApplicationListener<ApplicationStartedE
 				tenant.setCode(initializeTenantProperties.getCode());
 				tenant.setName(initializeTenantProperties.getName());
 				tenantService.save(tenant);
+
+				Client client = new Client();
+				client.setClientId(initializeClientProperties.getClientId());
+				client.setName(initializeTenantProperties.getName());
+				client.setAuthenticationMethods(ClientAuthenticationMethod.NONE.getValue());
+				client.setAuthorizationGrantTypes(AuthorizationGrantType.AUTHORIZATION_CODE.getValue());
+				client.setRedirectUris(initializeClientProperties.getRedirectUri());
+				client.setScopes(String.join(",", OidcScopes.OPENID, OidcScopes.PROFILE));
+				client.setRequireProofKey(true);
+				client.setRequireAuthorizationConsent(true);
+				client.setAccessTokenTimeToLive(500);
+				client.setRefreshTokenTimeToLive(1500);
+				client.setEnabled(true);
+				client.setTenant(tenant);
+				clientService.save(client);
 			}
 		}
 	}

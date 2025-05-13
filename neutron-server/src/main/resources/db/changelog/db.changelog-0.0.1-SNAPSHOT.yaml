@@ -46,3 +46,85 @@ databaseChangeLog:
                   name: last_modified_date
                   type: timestamp
                   remarks: "最后更新时间"
+        - createTable:
+            tableName: t_client
+            remarks: "客户端"
+            columns:
+              - column:
+                  name: id
+                  type: varchar(32)
+                  remarks: "ID"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: varchar(50)
+                  remarks: "客户端ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  remarks: "客户端名称"
+              - column:
+                  name: authentication_methods
+                  type: varchar(150)
+                  remarks: "认证方式"
+              - column:
+                  name: authorization_grant_types
+                  type: varchar(300)
+                  remarks: "授权方式"
+              - column:
+                  name: redirect_uris
+                  type: varchar(1000)
+                  remarks: "回调地址"
+              - column:
+                  name: scopes
+                  type: varchar(150)
+                  remarks: "授权域"
+              - column:
+                  name: require_proof_key
+                  type: bit(1)
+                  remarks: "是否使用PKCE, 0: 否, 1: 是"
+              - column:
+                  name: require_authorization_consent
+                  type: bit(1)
+                  remarks: "是否需要确认授权, 0: 否, 1: 是"
+              - column:
+                  name: access_token_time_to_live
+                  type: int
+                  remarks: "AccessToken存活时间,单位: 秒"
+              - column:
+                  name: refresh_token_time_to_live
+                  type: int
+                  remarks: "RefreshToken存活时间,单位: 秒"
+              - column:
+                  name: enabled
+                  type: bit(1)
+                  remarks: "是否启用, 0: 否, 1: 是. 默认: 1"
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: true
+              - column:
+                  name: tenant_id
+                  type: varchar(32)
+                  remarks: "租户ID"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: create_date
+                  type: timestamp
+                  remarks: "创建时间"
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: last_modified_date
+                  type: timestamp
+                  remarks: "最后更新时间"
+        - addUniqueConstraint:
+            tableName: t_client
+            constraintName: uk_client_tenant_id_client_id
+            columnNames: tenant_id,client_id
