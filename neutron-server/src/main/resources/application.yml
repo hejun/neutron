@@ -23,6 +23,11 @@ spring:
       connection-test-query: "SELECT 1"
   jpa:
     show-sql: true
+neutron:
+  init:
+    tenant:
+      code: neutron
+      name: Neutron
 ---
 spring:
   config:
