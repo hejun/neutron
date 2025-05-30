@@ -12,7 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
  * Web安全配置
@@ -39,7 +39,7 @@ public class DefaultSecurityConfig {
 			)
 			.logout(logout ->
 				logout
-					.logoutRequestMatcher(new AntPathRequestMatcher("/logout", HttpMethod.GET.name()))
+					.logoutRequestMatcher(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/logout"))
 					.logoutSuccessHandler(createLogoutSuccessHandler())
 			)
 			.oauth2ResourceServer(oauth2ResourceServer ->
