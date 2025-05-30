@@ -20,6 +20,8 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 
+import java.util.List;
+
 /**
  * 初始化配置
  *
@@ -69,6 +71,7 @@ public class InitializeConfig implements ApplicationListener<ApplicationStartedE
 				user.setPassword(initializeUserProperties.getPassword());
 				user.setEnabled(true);
 				user.setTenant(tenant);
+				user.setClients(List.of(client));
 				userService.save(user);
 			}
 		}

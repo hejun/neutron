@@ -172,6 +172,18 @@ databaseChangeLog:
                   name: last_modified_date
                   type: timestamp
                   remarks: "最后更新时间"
+        - createTable:
+            tableName: t_client_user
+            remarks: "客户端-用户-关系表"
+            columns:
+              - column:
+                  name: client_id
+                  type: varchar(32)
+                  remarks: "客户端ID"
+              - column:
+                  name: user_id
+                  type: varchar(32)
+                  remarks: "用户ID"
         - addUniqueConstraint:
             tableName: t_client
             constraintName: uk_client_tenant_id_client_id
@@ -180,3 +192,7 @@ databaseChangeLog:
             tableName: t_user
             constraintName: uk_user_tenant_id_username
             columnNames: tenant_id,username
+        - addUniqueConstraint:
+            tableName: t_client_user
+            constraintName: uk_client_user_client_id_user_id
+            columnNames: client_id,user_id
