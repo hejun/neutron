@@ -1,12 +1,15 @@
 package io.github.hejun.neutron.config;
 
 import io.github.hejun.neutron.conveter.ClientConverter;
+import io.github.hejun.neutron.conveter.UserConverter;
 import io.github.hejun.neutron.entity.Client;
+import io.github.hejun.neutron.entity.User;
 import io.github.hejun.neutron.service.IClientService;
+import io.github.hejun.neutron.service.IUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
@@ -31,12 +34,15 @@ public class CommonBeanConfig {
 	}
 
 	@Bean
-	public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-		return username -> User.builder()
-			.username(username)
-			.password(passwordEncoder.encode("1234"))
-			.roles("USER")
-			.build();
+	public UserDetailsService userDetailsService(IUserService userService,
+												 UserConverter userConverter) {
+		return username -> {
+			User user = userService.findByUsername(username);
+			if (user == null) {
+				throw new UsernameNotFoundException(username);
+			}
+			return userConverter.toUserDetails(user);
+		};
 	}
 
 	@Bean
@@ -60,7 +66,7 @@ public class CommonBeanConfig {
 			public RegisteredClient findByClientId(String clientId) {
 				Client client = clientService.findByClientId(clientId);
 				if (client != null) {
-					clientConverter.toRegisteredClient(client);
+					return clientConverter.toRegisteredClient(client);
 				}
 				return null;
 			}

@@ -124,7 +124,59 @@ databaseChangeLog:
                   name: last_modified_date
                   type: timestamp
                   remarks: "最后更新时间"
+        - createTable:
+            tableName: t_user
+            remarks: "用户"
+            columns:
+              - column:
+                  name: id
+                  type: varchar(32)
+                  remarks: "ID"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(20)
+                  remarks: "账户"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(70)
+                  remarks: "密码"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: bit(1)
+                  remarks: "是否启用, 0: 否, 1: 是. 默认: 1"
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: true
+              - column:
+                  name: tenant_id
+                  type: varchar(32)
+                  remarks: "租户ID"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: create_date
+                  type: timestamp
+                  remarks: "创建时间"
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: last_modified_date
+                  type: timestamp
+                  remarks: "最后更新时间"
         - addUniqueConstraint:
             tableName: t_client
             constraintName: uk_client_tenant_id_client_id
             columnNames: tenant_id,client_id
+        - addUniqueConstraint:
+            tableName: t_user
+            constraintName: uk_user_tenant_id_username
+            columnNames: tenant_id,username

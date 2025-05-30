@@ -32,6 +32,9 @@ neutron:
       client-id: neutron
       client-name: Neutron
       redirect-uri: http://localhost:5173/callback
+    user:
+      username: root
+      password: 1234
 ---
 spring:
   config:

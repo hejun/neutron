@@ -83,7 +83,7 @@ public class ClientServiceImpl implements IClientService {
 	@Override
 	public Client update(Client client) {
 		Client exists;
-		if (client == null || StringUtils.isBlank(client.getId()) || (exists = this.findById(client.getId())) == null) {
+		if (client == null || (exists = this.findById(client.getId())) == null) {
 			return null;
 		}
 		if (StringUtils.isNotBlank(client.getName())) {

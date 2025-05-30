@@ -2,10 +2,13 @@ package io.github.hejun.neutron.config;
 
 import io.github.hejun.neutron.entity.Client;
 import io.github.hejun.neutron.entity.Tenant;
+import io.github.hejun.neutron.entity.User;
 import io.github.hejun.neutron.properties.init.InitializeClientProperties;
 import io.github.hejun.neutron.properties.init.InitializeTenantProperties;
+import io.github.hejun.neutron.properties.init.InitializeUserProperties;
 import io.github.hejun.neutron.service.IClientService;
 import io.github.hejun.neutron.service.ITenantService;
+import io.github.hejun.neutron.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +32,10 @@ public class InitializeConfig implements ApplicationListener<ApplicationStartedE
 
 	private final InitializeTenantProperties initializeTenantProperties;
 	private final InitializeClientProperties initializeClientProperties;
+	private final InitializeUserProperties initializeUserProperties;
 	private final ITenantService tenantService;
 	private final IClientService clientService;
+	private final IUserService userService;
 
 	@Override
 	public void onApplicationEvent(ApplicationStartedEvent event) {
@@ -58,6 +63,13 @@ public class InitializeConfig implements ApplicationListener<ApplicationStartedE
 				client.setEnabled(true);
 				client.setTenant(tenant);
 				clientService.save(client);
+
+				User user = new User();
+				user.setUsername(initializeUserProperties.getUsername());
+				user.setPassword(initializeUserProperties.getPassword());
+				user.setEnabled(true);
+				user.setTenant(tenant);
+				userService.save(user);
 			}
 		}
 	}

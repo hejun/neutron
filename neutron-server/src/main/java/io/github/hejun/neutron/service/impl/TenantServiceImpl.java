@@ -83,7 +83,7 @@ public class TenantServiceImpl implements ITenantService {
 	@Override
 	public Tenant update(Tenant tenant) {
 		Tenant exists;
-		if (tenant == null || StringUtils.isBlank(tenant.getId()) || (exists = this.findById(tenant.getId())) == null) {
+		if (tenant == null || (exists = this.findById(tenant.getId())) == null) {
 			return null;
 		}
 		if (StringUtils.isNotBlank(tenant.getName())) {
