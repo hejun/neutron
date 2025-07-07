@@ -5,6 +5,10 @@ spring:
     name: neutron
   profiles:
     active: dev
+  security:
+    oauth2:
+      authorizationserver:
+        multiple-issuers-allowed: true
 ---
 spring:
   config:
@@ -12,6 +16,9 @@ spring:
       on-profile: dev
   thymeleaf:
     cache: false
+logging:
+  level:
+    'io.github.hejun.neutron': debug
 ---
 spring:
   config:

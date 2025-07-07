@@ -4,9 +4,12 @@ import { enc, SHA256 } from 'crypto-js'
 const authStore = useAuthStore()
 
 const BASE_URL = import.meta.env.VITE_BASE_URL ?? ''
+const TENANT = import.meta.env.VITE_TENANT ?? ''
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID ?? ''
 const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI ?? ''
 const SCOPE = import.meta.env.VITE_SCOPE ?? ''
+
+const REQUEST_PREFIX = TENANT ? `${BASE_URL}/${TENANT}` : `${BASE_URL}`
 
 interface Userinfo {
   sub: string
@@ -20,7 +23,7 @@ export async function signIn(callbackUrl?: string) {
   const nonce = authStore.authentication!.nonce!
   const codeChallenge = enc.Base64url.stringify(SHA256(codeVerify))
 
-  window.location.href = `${BASE_URL}/oauth2/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE}&code_challenge_method=S256&code_challenge=${codeChallenge}&state=${state}&nonce=${nonce}`
+  window.location.href = `${REQUEST_PREFIX}/oauth2/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE}&code_challenge_method=S256&code_challenge=${codeChallenge}&state=${state}&nonce=${nonce}`
 }
 
 export async function obtainToken(code: string, codeVerify: string) {
@@ -35,7 +38,10 @@ export async function obtainToken(code: string, codeVerify: string) {
     code_verifier: codeVerify
   }
 
-  return fetch(`${BASE_URL}/oauth2/token`, { method: 'POST', body: new URLSearchParams(Object.entries(params)) })
+  return fetch(`${REQUEST_PREFIX}/oauth2/token`, {
+    method: 'POST',
+    body: new URLSearchParams(Object.entries(params))
+  })
     .then(res => res.json())
     .then(res => {
       const expireAt = new Date()
@@ -51,7 +57,7 @@ export async function obtainToken(code: string, codeVerify: string) {
 }
 
 export async function findCurrentUserinfo() {
-  return fetch(`${BASE_URL}/userinfo`, {
+  return fetch(`${REQUEST_PREFIX}/userinfo`, {
     method: 'GET',
     headers: { Authorization: `${authStore.token?.tokenType} ${authStore.token?.accessToken}` }
   }).then<Userinfo>(res => res.json())

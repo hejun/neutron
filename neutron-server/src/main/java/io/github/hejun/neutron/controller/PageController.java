@@ -1,5 +1,6 @@
 package io.github.hejun.neutron.controller;
 
+import io.github.hejun.neutron.util.ContextUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -77,6 +78,11 @@ public class PageController {
 		model.addAttribute("previouslyApprovedScopes", previouslyApprovedScopes);
 		model.addAttribute("scopes", scopesToApprove);
 		model.addAttribute("state", state);
+
+		String issuer = ContextUtils.getIssuer();
+		if (issuer != null) {
+			model.addAttribute("issuer", issuer);
+		}
 		return "consent";
 	}
 

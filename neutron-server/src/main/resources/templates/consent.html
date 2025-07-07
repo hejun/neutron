@@ -14,7 +14,7 @@
   <p>
     应用<label th:text="${clientName}"></label>想要访问你的账户<label th:text="${principalName}"></label>
   </p>
-  <form th:action="@{/oauth2/authorize}" method="post">
+  <form th:action="@{{issuer}/oauth2/authorize(issuer=${issuer})}" method="post">
     <input type="hidden" name="client_id" th:value="${clientId}">
     <input type="hidden" name="state" th:value="${state}">
     <div>
