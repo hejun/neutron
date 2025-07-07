@@ -1,5 +1,6 @@
 package io.github.hejun.neutron.config;
 
+import io.github.hejun.neutron.security.issuer.AuthorizationServerContextEnhanceConfigurer;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +10,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -54,6 +53,8 @@ public class DefaultSecurityConfig {
 				oauth2ResourceServer
 					.jwt(Customizer.withDefaults())
 			);
+		// 自有 AuthorizationServerContext 缺少信息, 禁用原有的,使用自定义增强添加
+		http.with(new AuthorizationServerContextEnhanceConfigurer(), Customizer.withDefaults());
 		return http.build();
 	}
 
@@ -62,16 +63,6 @@ public class DefaultSecurityConfig {
 		urlLogoutHandler.setUseReferer(true);
 		urlLogoutHandler.setDefaultTargetUrl("/login?logout");
 		return urlLogoutHandler;
-	}
-
-	@Bean
-	public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-		return username -> User.builder()
-			.username(username)
-			.password("1234")
-			.roles("USER")
-			.passwordEncoder(passwordEncoder::encode)
-			.build();
 	}
 
 	@Bean

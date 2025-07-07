@@ -1,5 +1,6 @@
 package io.github.hejun.neutron.controller;
 
+import io.github.hejun.neutron.util.ContextUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -42,6 +43,11 @@ public class PageController {
 						  @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
 						  @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
 						  @RequestParam(OAuth2ParameterNames.STATE) String state) {
+		String issuer = ContextUtils.getIssuer();
+		if (issuer != null) {
+			model.addAttribute("issuer", issuer);
+		}
+
 		Set<String> scopesToApprove = new HashSet<>();
 		Set<String> previouslyApprovedScopes = new HashSet<>();
 

@@ -5,6 +5,10 @@ spring:
     name: neutron
   profiles:
     active: dev
+  security:
+    oauth2:
+      authorizationserver:
+        multiple-issuers-allowed: true
 ---
 spring:
   config:
