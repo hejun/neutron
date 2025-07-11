@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsEnhanceService {
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		String issuer = ContextUtils.getIssuer();
 		if (log.isDebugEnabled()) {
 			log.debug("loadUserByUsername, current issuer: {}", issuer);
