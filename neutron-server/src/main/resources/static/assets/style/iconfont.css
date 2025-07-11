@@ -1,0 +1,30 @@
+@charset "UTF-8";
+
+@font-face {
+    font-family: "iconfont";
+    src: url('../font/iconfont.ttf?t=1750151004672') format('truetype');
+}
+
+.icon {
+    font-family: "iconfont" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-eye:before {
+    content: "\e78f";
+}
+
+.icon-error:before {
+    content: "\e66a";
+}
+
+.icon-info:before {
+    content: "\e675";
+}
+
+.icon-eye-slash:before {
+    content: "\e605";
+}

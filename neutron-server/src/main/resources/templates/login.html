@@ -7,43 +7,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>登录</title>
   <link rel="icon" href="data:;">
+  <link rel="stylesheet" th:href="@{/assets/style/iconfont.css}">
   <link rel="stylesheet" th:href="@{/assets/style/login.css}">
 </head>
 
 <body>
-  <form th:action="@{/login/account}" method="post">
-    <div>
-      <label for="username">账户</label>
-      <input id="username" type="text" name="username" placeholder="账户"/>
+  <div class="header">
+    <h1>Neutron</h1>
+  </div>
+  <div class="login-wrapper">
+    <div class="login-box">
+      <div id="nav" class="nav-tab">
+        <label class="nav-tab-item active" for="password-login">账号登陆</label>
+        <label class="nav-tab-item" for="mobile-login">手机号登录</label>
+      </div>
+      <div id="content" class="nav-content">
+        <div id="password-login" class="nav-content-item active">
+          <form th:action="@{/login/account}" method="post">
+            <div class="form-group">
+              <label for="username">账户</label>
+              <input id="username" type="text" name="username" placeholder="账户"/>
+            </div>
+            <div class="form-group">
+              <label for="password">密码</label>
+              <input id="password" type="password" name="password" placeholder="密码"/>
+              <a href="javascript:void(0)" onclick="togglePassword(this)"><i class="icon icon-eye-slash"></i></a>
+            </div>
+            <div class="form-group error-info"
+                 th:if="${param?.error != null && session?.SPRING_SECURITY_LAST_EXCEPTION != null}">
+              <i class="icon icon-error"></i>
+              <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION?.message}"></span>
+            </div>
+            <div class="form-group">
+              <button type="submit">登录</button>
+            </div>
+          </form>
+          <div class="login-footer">
+            <a href="javascript:void(0)">忘记密码?</a>
+            <a href="javascript:void(0)">立即注册</a>
+          </div>
+        </div>
+        <div id="mobile-login" class="nav-content-item">
+          <form th:action="@{/login/phone}" method="post">
+            <div class="form-group">
+              <label for="phone">手机号</label>
+              <input id="phone" type="text" name="phone" placeholder="手机号"/>
+            </div>
+            <div class="form-group">
+              <label for="verifyCode">验证码</label>
+              <input id="verifyCode" type="text" name="verifyCode" placeholder="验证码"/>
+              <a href="javascript:void(0)" onclick="sendVerifyCode(this)">获取验证码</a>
+            </div>
+            <div class="form-group error-info"
+                 th:if="${param?.error != null && session?.SPRING_SECURITY_LAST_EXCEPTION != null}">
+              <i class="icon icon-error"></i>
+              <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION?.message}"></span>
+            </div>
+            <div class="form-group">
+              <button type="submit">登录</button>
+            </div>
+          </form>
+          <div class="login-footer">
+            <a href="javascript:void(0)">立即注册</a>
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <label for="password">密码</label>
-      <input id="password" type="password" name="password" placeholder="密码"/>
-    </div>
-    <div th:if="${param?.error != null && session?.SPRING_SECURITY_LAST_EXCEPTION != null}">
-      <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION?.message}"></span>
-    </div>
-    <div>
-      <button type="submit">登录</button>
-    </div>
-  </form>
-  <form th:action="@{/login/phone}" method="post">
-    <div>
-      <label for="phone">手机号</label>
-      <input id="phone" type="text" name="phone" placeholder="手机号"/>
-    </div>
-    <div>
-      <label for="verifyCode">验证码</label>
-      <input id="verifyCode" type="text" name="verifyCode" placeholder="验证码"/>
-      <button type="button" onclick="sendVerifyCode(this)">发送验证码</button>
-    </div>
-    <div th:if="${param?.error != null && session?.SPRING_SECURITY_LAST_EXCEPTION != null}">
-      <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION?.message}"></span>
-    </div>
-    <div>
-      <button type="submit">登录</button>
-    </div>
-  </form>
+  </div>
 </body>
 
 <script type="application/javascript" th:src="@{/assets/script/login.js}"></script>

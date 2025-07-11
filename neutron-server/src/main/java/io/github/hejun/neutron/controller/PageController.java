@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * OAuth页面 Controller
@@ -77,6 +75,7 @@ public class PageController {
 		model.addAttribute("principalName", principal.getName());
 		model.addAttribute("previouslyApprovedScopes", previouslyApprovedScopes);
 		model.addAttribute("scopes", scopesToApprove);
+		model.addAttribute("scopesDesc", buildScopeDesc());
 		model.addAttribute("state", state);
 
 		String issuer = ContextUtils.getIssuer();
@@ -84,6 +83,15 @@ public class PageController {
 			model.addAttribute("issuer", issuer);
 		}
 		return "consent";
+	}
+
+	private Map<String, String> buildScopeDesc() {
+		Map<String, String> scopeDesc = new HashMap<>();
+		scopeDesc.put(OidcScopes.PROFILE, "基本信息");
+		scopeDesc.put(OidcScopes.EMAIL, "邮箱");
+		scopeDesc.put(OidcScopes.PHONE, "电话");
+		scopeDesc.put(OidcScopes.ADDRESS, "地址");
+		return scopeDesc;
 	}
 
 }
