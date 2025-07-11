@@ -4,8 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContext;
 import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContextHolder;
@@ -148,16 +146,6 @@ public class AuthorizationServerContextEnhanceFilter extends OncePerRequestFilte
 				.build()
 				.toUriString();
 		}
-
-	}
-
-	@Getter
-	@AllArgsConstructor
-	private static final class DefaultAuthorizationServerContext implements AuthorizationServerContext {
-
-		private final String issuer;
-		private final String clientId;
-		private final AuthorizationServerSettings authorizationServerSettings;
 
 	}
 

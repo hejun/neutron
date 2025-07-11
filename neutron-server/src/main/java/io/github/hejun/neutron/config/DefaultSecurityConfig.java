@@ -1,6 +1,8 @@
 package io.github.hejun.neutron.config;
 
 import io.github.hejun.neutron.security.issuer.AuthorizationServerContextEnhanceConfigurer;
+import io.github.hejun.neutron.security.phone.PhoneLoginConfigurer;
+import io.github.hejun.neutron.security.sendVerifyCode.SendVerifyCodeConfigurer;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +45,7 @@ public class DefaultSecurityConfig {
 			.formLogin(formLogin ->
 				formLogin
 					.loginPage("/login").permitAll()
+					.loginProcessingUrl("/login/account")
 			)
 			.logout(logout ->
 				logout
@@ -57,9 +60,14 @@ public class DefaultSecurityConfig {
 		http.with(new AuthorizationServerContextEnhanceConfigurer(), authorizationServerContextEnhanceConfigurer ->
 			authorizationServerContextEnhanceConfigurer
 				.requestMatcher("/login")
+				.requestMatcher(HttpMethod.POST, "/login/account")
+				.requestMatcher(HttpMethod.POST, "/login/phone")
+				.requestMatcher(HttpMethod.GET, "/sendVerifyCode")
 				.requestMatcher(HttpMethod.GET, "/consent")
 				.requestMatcher(HttpMethod.GET, "/logout")
 		);
+		http.with(new SendVerifyCodeConfigurer<>(), Customizer.withDefaults());
+		http.with(new PhoneLoginConfigurer<>(), Customizer.withDefaults());
 		return http.build();
 	}
 
