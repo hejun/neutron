@@ -9,6 +9,9 @@ spring:
     oauth2:
       authorizationserver:
         multiple-issuers-allowed: true
+mybatis-plus:
+  configuration:
+    default-executor-type: reuse
 ---
 spring:
   config:
@@ -16,6 +19,41 @@ spring:
       on-profile: dev
   thymeleaf:
     cache: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.2.2:3306/neutron?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&allowMultiQueries=true
+    username: root
+    password: Hj1234
+    hikari:
+      connection-test-query: "SELECT 1"
+  data:
+    redis:
+      host: 192.168.2.2
+      port: 6379
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+  cache:
+    redis:
+      key-prefix: "cache"
+      time-to-live: 1800000
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+neutron:
+  bootstrap:
+    admin-tenant-name: Neutron
+    admin-tenant-issuer: "http://127.0.0.1:9000/neutron"
+    admin-client-id: neutron
+    admin-client-name: Neutron
+    admin-client-redirect-uris:
+      - "http://localhost:5173/callback"
+    admin-username: root
+    admin-password: 1234
 ---
 spring:
   config:

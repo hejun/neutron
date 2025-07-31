@@ -1,0 +1,239 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0.0.1-SNAPSHOT
+      author: hejun.dev@qq.com
+      changes:
+        - createTable:
+            tableName: t_tenant
+            remarks: "租户"
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: "ID"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  remarks: "名称"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: issuer
+                  type: varchar(100)
+                  remarks: "认证域名"
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uk_tenant_issuer
+              - column:
+                  name: public_key
+                  type: varchar(1000)
+                  remarks: "公钥"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: private_key
+                  type: varchar(2000)
+                  remarks: "私钥"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: bit(1)
+                  remarks: "是否启用, 0: 否, 1: 是. 默认: 1"
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: true
+              - column:
+                  name: create_date
+                  type: timestamp
+                  remarks: "创建时间"
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+              - column:
+                  name: last_modified_date
+                  type: timestamp
+                  remarks: "最后更新时间"
+                  defaultValueComputed: "NULL ON UPDATE CURRENT_TIMESTAMP"
+        - createTable:
+            tableName: t_client
+            remarks: "客户端"
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: "ID"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: varchar(50)
+                  remarks: "客户端ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: client_secret
+                  type: varchar(200)
+                  remarks: "客户端密钥"
+              - column:
+                  name: name
+                  type: varchar(50)
+                  remarks: "客户端名称"
+              - column:
+                  name: client_authentication_methods
+                  type: varchar(150)
+                  remarks: "认证方式"
+              - column:
+                  name: authorization_grant_types
+                  type: varchar(300)
+                  remarks: "授权方式"
+              - column:
+                  name: redirect_uris
+                  type: varchar(500)
+                  remarks: "回调地址"
+              - column:
+                  name: scopes
+                  type: varchar(150)
+                  remarks: "授权域"
+              - column:
+                  name: require_proof_key
+                  type: bit(1)
+                  remarks: "是否使用PKCE模式, 0: 否, 1: 是"
+              - column:
+                  name: require_authorization_consent
+                  type: bit(1)
+                  remarks: "是否需要确认授权, 0: 否, 1: 是"
+              - column:
+                  name: access_token_time_to_live
+                  type: int
+                  remarks: "AccessToken存活时间,单位: 秒"
+              - column:
+                  name: refresh_token_time_to_live
+                  type: int
+                  remarks: "RefreshToken存活时间,单位: 秒"
+              - column:
+                  name: enabled
+                  type: bit(1)
+                  remarks: "是否启用, 0: 否, 1: 是. 默认: 1"
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: true
+              - column:
+                  name: tenant_id
+                  type: bigint
+                  remarks: "租户ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_date
+                  type: timestamp
+                  remarks: "创建时间"
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+              - column:
+                  name: last_modified_date
+                  type: timestamp
+                  remarks: "最后更新时间"
+                  defaultValueComputed: "NULL ON UPDATE CURRENT_TIMESTAMP"
+        - createTable:
+            tableName: t_user
+            remarks: "用户"
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: "ID"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(20)
+                  remarks: "账户"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(70)
+                  remarks: "密码"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: bit(1)
+                  remarks: "是否启用, 0: 否, 1: 是. 默认: 1"
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: true
+              - column:
+                  name: tenant_id
+                  type: bigint
+                  remarks: "租户ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_date
+                  type: timestamp
+                  remarks: "创建时间"
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+              - column:
+                  name: last_modified_date
+                  type: timestamp
+                  remarks: "最后更新时间"
+                  defaultValueComputed: "NULL ON UPDATE CURRENT_TIMESTAMP"
+        - createTable:
+            tableName: t_user_client
+            remarks: "用户-客户端-关系表"
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  remarks: "用户ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: bigint
+                  remarks: "客户端ID"
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: t_consent
+            remarks: "客户端-用户授权"
+            columns:
+              - column:
+                  name: client_id
+                  type: bigint
+                  remarks: "客户端ID"
+              - column:
+                  name: user_id
+                  type: bigint
+                  remarks: "用户ID"
+              - column:
+                  name: authorities
+                  type: varchar(1000)
+                  remarks: "授权"
+        - addUniqueConstraint:
+            tableName: t_client
+            constraintName: uk-client-tenant_id-client_id
+            columnNames: tenant_id,client_id
+        - addUniqueConstraint:
+            tableName: t_user
+            constraintName: uk-user-tenant_id-username
+            columnNames: tenant_id,username
+        - addUniqueConstraint:
+            tableName: t_user_client
+            constraintName: uk-user_client-user_id-client_id
+            columnNames: user_id,client_id
+        - addUniqueConstraint:
+            tableName: t_consent
+            constraintName: uk_consent_client_id_user_id
+            columnNames: client_id,user_id
