@@ -4,6 +4,7 @@ import io.github.hejun.neutron.security.issuer.authorization.AuthorizationServer
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
@@ -34,10 +35,20 @@ public class AuthorizationServerContextEnhanceConfigurer
 			http.addFilterAfter(postProcess(enhanceFilter), SecurityContextHolderFilter.class);
 		} else {
 			RequestCache requestCache = http.getSharedObject(RequestCache.class);
+			OAuth2AuthorizationService oAuth2AuthorizationService = getOAuth2AuthorizationService(http);
 			AuthorizationServerContextEnhanceFilter enhanceFilter =
-				new AuthorizationServerContextEnhanceFilter(authorizationServerSettings, requestCache);
+				new AuthorizationServerContextEnhanceFilter(authorizationServerSettings, requestCache, oAuth2AuthorizationService);
 			http.addFilterAfter(postProcess(enhanceFilter), SecurityContextHolderFilter.class);
 		}
+	}
+
+	private OAuth2AuthorizationService getOAuth2AuthorizationService(HttpSecurity http) {
+		OAuth2AuthorizationService oAuth2AuthorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
+		if (oAuth2AuthorizationService == null) {
+			ApplicationContext context = http.getSharedObject(ApplicationContext.class);
+			oAuth2AuthorizationService = context.getBean(OAuth2AuthorizationService.class);
+		}
+		return oAuth2AuthorizationService;
 	}
 
 	private AuthorizationServerSettings getAuthorizationServerSettings(HttpSecurity http) {
@@ -85,7 +96,7 @@ public class AuthorizationServerContextEnhanceConfigurer
 			Field filterField = ReflectionUtils.findField(orderedFilterClass, "filter");
 			if (filterField != null) {
 				ReflectionUtils.makeAccessible(filterField);
-				if (ReflectionUtils.getField(filtersField, http) instanceof List<?> filters){
+				if (ReflectionUtils.getField(filtersField, http) instanceof List<?> filters) {
 					Object targetFilter = null;
 					for (Object filter : filters) {
 						Object orderedFilter = ReflectionUtils.getField(filterField, filter);

@@ -6,10 +6,16 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContext;
 import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContextHolder;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.UrlUtils;
@@ -28,10 +34,13 @@ import java.util.*;
  */
 public class AuthorizationServerContextEnhanceFilter extends OncePerRequestFilter {
 
+	private final BearerTokenResolver bearerTokenResolver = new DefaultBearerTokenResolver();
 	private final AuthorizationServerSettings authorizationServerSettings;
 	private final IssuerResolver issuerResolver;
 
 	private RequestCache requestCache;
+	private OAuth2AuthorizationService oAuth2AuthorizationService;
+
 
 	public AuthorizationServerContextEnhanceFilter(AuthorizationServerSettings authorizationServerSettings) {
 		Assert.notNull(authorizationServerSettings, "authorizationServerSettings cannot be null");
@@ -39,18 +48,21 @@ public class AuthorizationServerContextEnhanceFilter extends OncePerRequestFilte
 		this.issuerResolver = new IssuerResolver(authorizationServerSettings);
 	}
 
-	public AuthorizationServerContextEnhanceFilter(AuthorizationServerSettings authorizationServerSettings, RequestCache requestCache) {
+	public AuthorizationServerContextEnhanceFilter(AuthorizationServerSettings authorizationServerSettings,
+												   RequestCache requestCache,
+												   OAuth2AuthorizationService oAuth2AuthorizationService) {
 		Assert.notNull(authorizationServerSettings, "authorizationServerSettings cannot be null");
 		this.authorizationServerSettings = authorizationServerSettings;
 		this.issuerResolver = new IssuerResolver(authorizationServerSettings);
 		this.requestCache = requestCache;
+		this.oAuth2AuthorizationService = oAuth2AuthorizationService;
 	}
 
 	@Override
 	protected void doFilterInternal(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response,
 									@Nonnull FilterChain chain) throws ServletException, IOException {
-		// AuthorizationServer 环境沿用 AuthorizationServerContextFilter
 		if (requestCache == null) {
+			// AuthorizationServer 环境沿用 AuthorizationServerContextFilter
 			try {
 				String issuer = this.issuerResolver.resolve(request);
 				String clientId = request.getParameter(OAuth2ParameterNames.CLIENT_ID);
@@ -63,6 +75,27 @@ public class AuthorizationServerContextEnhanceFilter extends OncePerRequestFilte
 			}
 		} else {
 			// 非 AuthorizationServer 环境
+			String accessToken = bearerTokenResolver.resolve(request);
+			if (accessToken != null) {
+				OAuth2Authorization authorization = oAuth2AuthorizationService.findByToken(accessToken, OAuth2TokenType.ACCESS_TOKEN);
+				if (authorization != null) {
+					OAuth2AuthorizationRequest authorizationRequest = authorization.getAttribute(OAuth2AuthorizationRequest.class.getName());
+					if (authorizationRequest != null) {
+						try {
+							String issuer = this.issuerResolver.resolve(authorizationRequest);
+							String clientId = authorizationRequest.getClientId();
+							AuthorizationServerContext authorizationServerContext = new DefaultAuthorizationServerContext(issuer, clientId,
+								this.authorizationServerSettings);
+							AuthorizationServerContextHolder.setContext(authorizationServerContext);
+							chain.doFilter(request, response);
+						} finally {
+							AuthorizationServerContextHolder.resetContext();
+						}
+						return;
+					}
+				}
+			}
+
 			SavedRequest savedRequest = requestCache.getRequest(request, response);
 			if (savedRequest != null) {
 				try {
@@ -76,9 +109,9 @@ public class AuthorizationServerContextEnhanceFilter extends OncePerRequestFilte
 				} finally {
 					AuthorizationServerContextHolder.resetContext();
 				}
-			} else {
-				chain.doFilter(request, response);
+				return;
 			}
+			chain.doFilter(request, response);
 		}
 	}
 
@@ -125,6 +158,21 @@ public class AuthorizationServerContextEnhanceFilter extends OncePerRequestFilte
 				.replaceQuery(null)
 				.toUriString();
 			return this.resolve(path, redirectUrl);
+		}
+
+		private String resolve(OAuth2AuthorizationRequest oAuth2AuthorizationRequest) {
+			if (this.issuer != null) {
+				return this.issuer;
+			}
+			String authorizationUri = oAuth2AuthorizationRequest.getAuthorizationUri();
+			String path = UriComponentsBuilder
+				.fromUriString(authorizationUri)
+				.scheme(null)
+				.host(null)
+				.port(null)
+				.replaceQuery(null)
+				.toUriString();
+			return this.resolve(path, authorizationUri);
 		}
 
 		private String resolve(String path, String fullRequestUrl) {
