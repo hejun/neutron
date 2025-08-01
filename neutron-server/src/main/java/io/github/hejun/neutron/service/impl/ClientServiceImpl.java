@@ -6,6 +6,7 @@ import io.github.hejun.neutron.mapper.ClientMapper;
 import io.github.hejun.neutron.service.IClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -21,6 +22,7 @@ public class ClientServiceImpl implements IClientService {
 	private final ClientMapper clientMapper;
 
 	@Override
+	@Cacheable(cacheNames = "client:id", key = "#id?:''", unless = "#result == null")
 	public Client findById(Long id) {
 		if (id == null) {
 			return null;

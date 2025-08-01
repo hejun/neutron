@@ -8,7 +8,14 @@ const routes: Readonly<RouteRecordRaw[]> = [
     component: () => import('@/views/Home.vue'),
     meta: {
       requireAuthentication: true
-    }
+    },
+    children: [
+      {
+        name: 'Tenant',
+        path: '/tenant',
+        component: () => import('@/views/tenant/Tenant.vue')
+      }
+    ]
   },
   {
     name: 'Callback',

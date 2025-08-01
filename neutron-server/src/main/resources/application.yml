@@ -5,6 +5,8 @@ spring:
     name: neutron
   profiles:
     active: dev
+  jackson:
+    time-zone: GMT+8
   security:
     oauth2:
       authorizationserver:

@@ -1,6 +1,8 @@
 package io.github.hejun.neutron.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.github.hejun.neutron.entity.Tenant;
 import io.github.hejun.neutron.mapper.TenantMapper;
 import io.github.hejun.neutron.service.ITenantService;
@@ -26,6 +28,13 @@ import java.util.Base64;
 public class TenantServiceImpl implements ITenantService {
 
 	private final TenantMapper tenantMapper;
+
+	@Override
+	public IPage<Tenant> findPage(Long page, Long size) {
+		return tenantMapper.selectPage(Page.of(page, size), Wrappers.<Tenant>lambdaQuery()
+			.select(Tenant::getId, Tenant::getName, Tenant::getIssuer, Tenant::getEnabled, Tenant::getCreateDate)
+		);
+	}
 
 	@Override
 	@Cacheable(cacheNames = "tenant:issuer", key = "#issuer?:''", unless = "#result == null")
