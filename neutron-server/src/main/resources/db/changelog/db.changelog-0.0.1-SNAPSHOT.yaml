@@ -97,6 +97,10 @@ databaseChangeLog:
                   type: varchar(500)
                   remarks: "回调地址"
               - column:
+                  name: post_logout_redirect_uris
+                  type: varchar(500)
+                  remarks: "登出跳转地址"
+              - column:
                   name: scopes
                   type: varchar(150)
                   remarks: "授权域"

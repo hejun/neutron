@@ -33,6 +33,8 @@ public class Client {
 
 	private String redirectUris;
 
+	private String postLogoutRedirectUris;
+
 	private String scopes;
 
 	private Boolean requireProofKey;

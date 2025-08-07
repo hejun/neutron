@@ -109,7 +109,7 @@ public class OAuth2AuthorizationModelMapper {
 		}
 		if (redisAuthorization.getIdToken() != null) {
 			RedisToken token = redisAuthorization.getIdToken();
-			builder.token(new OidcIdToken(token.getTokenValue(), token.getIssuedAt(), token.getExpiresAt(), token.getClaims()), metadata -> Optional.ofNullable(token.getMetadata()).ifPresent(metadata::putAll));
+			builder.token(new OidcIdToken(token.getTokenValue(), token.getIssuedAt(), token.getExpiresAt(), token.getClaims().getClaims()), metadata -> Optional.ofNullable(token.getMetadata()).ifPresent(metadata::putAll));
 		}
 		if (redisAuthorization.getDeviceCode() != null) {
 			RedisToken token = redisAuthorization.getDeviceCode();
@@ -143,7 +143,7 @@ public class OAuth2AuthorizationModelMapper {
 
 	private RedisToken convertToken(OAuth2Authorization.Token<?> token, Map<String, Object> claims) {
 		RedisToken redisToken = this.convertToken(token);
-		redisToken.setClaims(convertUnmodifiableMap(claims));
+		redisToken.setClaims(new ClaimsHolder(claims));
 		return redisToken;
 	}
 
@@ -155,7 +155,7 @@ public class OAuth2AuthorizationModelMapper {
 		if (!map.isEmpty()) {
 			for (Map.Entry<String, Object> entry : map.entrySet()) {
 				switch (entry.getValue()) {
-					case Map<?,?> mapValue -> unmodifiableMap.put(entry.getKey(), new HashMap<>(mapValue));
+					case Map<?, ?> mapValue -> unmodifiableMap.put(entry.getKey(), new HashMap<>(mapValue));
 					case List<?> listValue -> unmodifiableMap.put(entry.getKey(), new ArrayList<>(listValue));
 					case URL url -> unmodifiableMap.put(entry.getKey(), url.toString());
 					case null, default -> unmodifiableMap.put(entry.getKey(), entry.getValue());
@@ -229,7 +229,20 @@ public class OAuth2AuthorizationModelMapper {
 		private OAuth2AccessToken.TokenType tokenType;
 		private Set<String> scopes;
 		private Map<String, Object> metadata;
-		private Map<String, Object> claims;
+		private ClaimsHolder claims;
+
+	}
+
+
+	@Getter
+	@Setter
+	public static class ClaimsHolder {
+
+		private final Map<String, Object> claims;
+
+		public ClaimsHolder(Map<String, Object> claims) {
+			this.claims = claims;
+		}
 
 	}
 

@@ -1,6 +1,8 @@
 package io.github.hejun.neutron.config;
 
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.hejun.neutron.security.persist.OAuth2AuthorizationModelMapper;
 import jakarta.annotation.Nonnull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,7 @@ import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2A
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Redis 配置
@@ -36,7 +39,8 @@ public class RedisConfig {
 		converters.addAll(Jsr310Converters.getConvertersToRegister());
 		converters.addAll(Arrays.asList(
 			new UsernamePasswordAuthenticationTokenToBytesConverter(), new BytesToUsernamePasswordAuthenticationTokenConverter(),
-			new OAuth2AuthorizationRequestToBytesConverter(), new BytesToOAuth2AuthorizationRequestConverter()
+			new OAuth2AuthorizationRequestToBytesConverter(), new BytesToOAuth2AuthorizationRequestConverter(),
+			new ClaimsHolderToBytesConverter(), new BytesToClaimsHolderConverter()
 		));
 		return new RedisCustomConversions(converters);
 	}
@@ -117,6 +121,62 @@ public class RedisConfig {
 		@Override
 		public byte[] convert(@Nonnull UsernamePasswordAuthenticationToken value) {
 			return this.serializer.serialize(value);
+		}
+
+	}
+
+	@ReadingConverter
+	public static class BytesToClaimsHolderConverter
+		implements Converter<byte[], OAuth2AuthorizationModelMapper.ClaimsHolder> {
+
+		private final Jackson2JsonRedisSerializer<OAuth2AuthorizationModelMapper.ClaimsHolder> serializer;
+
+		public BytesToClaimsHolderConverter() {
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper
+				.registerModules(SecurityJackson2Modules.getModules(BytesToClaimsHolderConverter.class.getClassLoader()));
+			objectMapper.addMixIn(OAuth2AuthorizationModelMapper.ClaimsHolder.class, ClaimsHolderMixin.class);
+			this.serializer = new Jackson2JsonRedisSerializer<>(objectMapper,
+				OAuth2AuthorizationModelMapper.ClaimsHolder.class);
+		}
+
+		@Override
+		public OAuth2AuthorizationModelMapper.ClaimsHolder convert(@Nonnull byte[] value) {
+			return this.serializer.deserialize(value);
+		}
+
+	}
+
+	@WritingConverter
+	public static class ClaimsHolderToBytesConverter
+		implements Converter<OAuth2AuthorizationModelMapper.ClaimsHolder, byte[]> {
+
+		private final Jackson2JsonRedisSerializer<OAuth2AuthorizationModelMapper.ClaimsHolder> serializer;
+
+		public ClaimsHolderToBytesConverter() {
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper
+				.registerModules(SecurityJackson2Modules.getModules(ClaimsHolderToBytesConverter.class.getClassLoader()));
+			objectMapper.addMixIn(OAuth2AuthorizationModelMapper.ClaimsHolder.class, ClaimsHolderMixin.class);
+			this.serializer = new Jackson2JsonRedisSerializer<>(objectMapper,
+				OAuth2AuthorizationModelMapper.ClaimsHolder.class);
+		}
+
+		@Override
+		public byte[] convert(@Nonnull OAuth2AuthorizationModelMapper.ClaimsHolder value) {
+			return this.serializer.serialize(value);
+		}
+
+	}
+
+	@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+	@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE,
+		isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	abstract static class ClaimsHolderMixin {
+
+		@JsonCreator
+		ClaimsHolderMixin(@JsonProperty("claims") Map<String, Object> claims) {
 		}
 
 	}

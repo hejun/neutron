@@ -93,10 +93,16 @@ public class RegisteredClientRepositoryImpl implements RegisteredClientRepositor
 				clientBuilder.authorizationGrantType(resolveAuthorizationGrantType(authorizationGrantType));
 			}
 		}
-		if (StringUtils.hasText(client.getRedirectUris())){
+		if (StringUtils.hasText(client.getRedirectUris())) {
 			Set<String> redirectUris = StringUtils.commaDelimitedListToSet(client.getRedirectUris());
 			for (String redirectUri : redirectUris) {
 				clientBuilder.redirectUri(redirectUri);
+			}
+		}
+		if (StringUtils.hasText(client.getPostLogoutRedirectUris())) {
+			Set<String> postLogoutRedirectUris = StringUtils.commaDelimitedListToSet(client.getPostLogoutRedirectUris());
+			for (String postLogoutRedirectUri : postLogoutRedirectUris) {
+				clientBuilder.postLogoutRedirectUri(postLogoutRedirectUri);
 			}
 		}
 		if (StringUtils.hasText(client.getScopes())) {
@@ -110,7 +116,7 @@ public class RegisteredClientRepositoryImpl implements RegisteredClientRepositor
 		if (Boolean.TRUE.equals(client.getRequireProofKey())) {
 			clientSettingsBuilder.requireProofKey(client.getRequireProofKey());
 		}
-		if (Boolean.TRUE.equals(client.getRequireAuthorizationConsent())){
+		if (Boolean.TRUE.equals(client.getRequireAuthorizationConsent())) {
 			clientSettingsBuilder.requireAuthorizationConsent(true);
 		}
 		clientBuilder.clientSettings(clientSettingsBuilder.build());
