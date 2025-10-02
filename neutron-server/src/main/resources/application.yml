@@ -5,12 +5,19 @@ spring:
     name: Neutron
   profiles:
     active: dev
+  security:
+    oauth2:
+      authorizationserver:
+        multiple-issuers-allowed: true
 ---
 spring:
   config:
     activate:
       on-profile: dev
     import: file:neutron-server/.env.development[.yml]
+logging:
+  level:
+    'io.github.hejun.neutron': trace
 ---
 spring:
   config:

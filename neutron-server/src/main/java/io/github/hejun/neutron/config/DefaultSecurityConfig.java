@@ -1,5 +1,6 @@
 package io.github.hejun.neutron.config;
 
+import io.github.hejun.neutron.security.issuer.AuthorizationServerContextEnhanceConfigurer;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +57,8 @@ public class DefaultSecurityConfig {
 				oauth2ResourceServer
 					.jwt(Customizer.withDefaults())
 			);
+		// 自有 AuthorizationServerContext 缺少信息, 禁用原有的,使用自定义增强添加
+		http.with(new AuthorizationServerContextEnhanceConfigurer(), Customizer.withDefaults());
 		return http.build();
 	}
 

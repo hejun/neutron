@@ -4,9 +4,12 @@ import { enc, SHA256 } from 'crypto-js'
 const authStore = useAuthStore()
 
 const BASE_URL = import.meta.env.VITE_BASE_URL ?? ''
+const TENANT = import.meta.env.VITE_TENANT ?? ''
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID ?? ''
 const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI ?? ''
 const SCOPE = import.meta.env.VITE_SCOPE ?? ''
+
+const REQUEST_PREFIX = TENANT ? `${BASE_URL}/${TENANT}` : `${BASE_URL}`
 
 interface Userinfo {
   sub: string
@@ -26,7 +29,7 @@ export function signIn(callbackUrl?: string) {
     nonce: authStore.authenticator!.nonce
   })
 
-  window.location.href = `${BASE_URL}/oauth2/authorize?${urlParams}`
+  window.location.href = `${REQUEST_PREFIX}/oauth2/authorize?${urlParams}`
 }
 
 export async function obtainToken(code: string, codeVerify: string) {
@@ -41,7 +44,7 @@ export async function obtainToken(code: string, codeVerify: string) {
     code_verifier: codeVerify
   }
 
-  return fetch(`${BASE_URL}/oauth2/token`, { method: 'POST', body: new URLSearchParams(Object.entries(params)) })
+  return fetch(`${REQUEST_PREFIX}/oauth2/token`, { method: 'POST', body: new URLSearchParams(Object.entries(params)) })
     .then(res => res.json())
     .then(res => {
       const expireAt = new Date()
@@ -64,7 +67,7 @@ export function signOut() {
 }
 
 export async function findUserinfo() {
-  return fetch(`${BASE_URL}/userinfo`, {
+  return fetch(`${REQUEST_PREFIX}/userinfo`, {
     method: 'GET',
     headers: { Authorization: `${authStore.authentication?.tokenType} ${authStore.authentication?.accessToken}` }
   }).then<Userinfo>(res => res.json())
