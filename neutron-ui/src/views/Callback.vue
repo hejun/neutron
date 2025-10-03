@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import useAuthStore from '@/store/AuthStore'
 import { enc } from 'crypto-js'
@@ -28,14 +29,14 @@ const oAuthObtainToken = () => {
       router.replace(url)
     })
 }
+
+onMounted(() => oAuthObtainToken())
 </script>
 
 <template>
-  <div>
-    <button type="button" @click="oAuthObtainToken">Obtain Token</button>
-  </div>
-  <div>
+  <div v-if="error">
     <p>{{ error }}</p>
     <p>{{ error_description }}</p>
   </div>
+  <div v-else>请稍后...</div>
 </template>

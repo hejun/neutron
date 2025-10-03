@@ -92,6 +92,16 @@ public class PageController {
 		return "consent";
 	}
 
+	@GetMapping("/terms-of-service")
+	public String termsOfService() {
+		return "termsOfService";
+	}
+
+	@GetMapping("/privacy-policy")
+	public String privacyPolicy() {
+		return "privacyPolicy";
+	}
+
 	/**
 	 * 处理浏览器F12开发模式下默认会发出的请求
 	 *

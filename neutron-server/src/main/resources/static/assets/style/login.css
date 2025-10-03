@@ -1,0 +1,170 @@
+@charset "UTF-8";
+
+:root {
+    --color-primary: #5266ed;
+    --color-primary-dark: #3b52eb;
+    --text-color: #181818;
+    --text-error-color: #d6260b;
+    --text-gray-color: #717171;
+    --border-color: #d8d8d8;
+    --border-color-dark: #a5a5a5
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f7f8fa;
+    background-image: radial-gradient(#dfdfdf 8%, transparent 0);
+    background-size: 16px 16px;
+    color: var(--text-color);
+    font-size: 14px;
+    line-height: 1.4
+}
+
+.header {
+    box-sizing: border-box;
+    font-size: 1.5rem;
+    font-weight: 500;
+    height: 60px;
+    line-height: 60px;
+    padding: 0 32px
+}
+
+.content {
+    margin: 0 auto;
+    max-width: 440px;
+    text-align: center;
+    width: 80%
+}
+
+.content .title {
+    font-size: 2rem;
+    margin: 96px 0 8px
+}
+
+.content .desc {
+    color: var(--text-gray-color)
+}
+
+.content .login-box {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 0 8px #0000001f;
+    box-sizing: border-box;
+    margin-top: 40px;
+    padding: 24px;
+    position: relative;
+    text-align: left;
+    width: 100%;
+    z-index: 20
+}
+
+.content .login-box > form > label {
+    display: block;
+    margin: 16px 0 8px
+}
+
+.content .login-box > form > label:first-child {
+    margin-top: 0
+}
+
+.content .login-box > form > div:has(input) {
+    background-color: #f9fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 8px
+}
+
+.content .login-box > form > div:has(input):focus-within {
+    border-color: var(--border-color-dark)
+}
+
+.content .login-box > form > div:has(input) > svg {
+    color: var(--text-gray-color);
+    height: 100%;
+    margin-right: 8px
+}
+
+.content .login-box > form > div:has(input) > input {
+    background: none;
+    -webkit-background-clip: text;
+    background-clip: text;
+    border: none;
+    display: block;
+    font-size: .8rem;
+    height: 100%;
+    margin: 0;
+    outline: none;
+    padding: 0;
+    width: 100%
+}
+
+.content .login-box .error-tips {
+    color: var(--text-error-color);
+    font-size: .8rem;
+    margin: 8px 0
+}
+
+.content .login-box .error-tips svg {
+    display: inline-block;
+    height: 16px;
+    margin-right: 4px;
+    vertical-align: bottom;
+    width: 16px
+}
+
+.content .login-box .error-tips span {
+    height: 16px
+}
+
+.content .login-box .login-btn {
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+    height: 40px;
+    margin-top: 24px;
+    padding: 8px;
+    width: 100%
+}
+
+.content .login-box .login-btn:hover {
+    background-color: var(--color-primary-dark)
+}
+
+.content .policy-box {
+    background-color: #f0f1f3;
+    border-radius: 16px;
+    box-shadow: 0 0 8px #0000001f;
+    box-sizing: border-box;
+    color: var(--text-gray-color);
+    font-size: .8rem;
+    margin-top: -24px;
+    padding: 32px 24px 16px;
+    position: relative;
+    text-align: left;
+    width: 100%;
+    z-index: 10
+}
+
+.content .policy-box a {
+    color: inherit
+}
+
+.content .policy-box a:hover {
+    color: var(--text-color)
+}

@@ -1,0 +1,72 @@
+@charset "UTF-8";
+
+:root {
+    --color-primary: #5266ed;
+    --color-primary-dark: #3b52eb;
+    --text-color: #181818;
+    --text-error-color: #d6260b;
+    --text-gray-color: #717171;
+    --border-color: #d8d8d8;
+    --border-color-dark: #a5a5a5
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%
+}
+
+body {
+    background-color: #f7f8fa;
+    background-image: radial-gradient(#dfdfdf 8%, transparent 0);
+    background-size: 16px 16px;
+    color: var(--text-color);
+    font-size: 14px;
+    line-height: 1.4
+}
+
+.header {
+    box-sizing: border-box;
+    font-size: 1.5rem;
+    font-weight: 500;
+    height: 60px;
+    line-height: 60px;
+    padding: 0 32px
+}
+
+.content {
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.content .title {
+    font-size: 2rem;
+    margin: 96px 0 8px
+}
+
+.content .desc {
+    color: var(--text-gray-color)
+}
+
+.content .agreement-box {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 0 8px #0000001f;
+    box-sizing: border-box;
+    margin-top: 40px;
+    padding: 24px;
+    position: relative;
+    text-align: left;
+    width: 100%;
+    z-index: 20
+}
+
+.content .agreement-box label {
+    font-weight: 500;
+}
+
+.content .agreement-box p {
+    text-indent: 24px;
+}

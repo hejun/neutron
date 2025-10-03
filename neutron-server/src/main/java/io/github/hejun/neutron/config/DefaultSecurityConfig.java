@@ -38,7 +38,9 @@ public class DefaultSecurityConfig {
 		http
 			.authorizeHttpRequests(authorize ->
 				authorize
-					.requestMatchers("/assets/**", "/favicon.ico", "/robots.txt", "/.well-known/**").permitAll()
+					.requestMatchers("/assets/**", "/favicon.ico", "/robots.txt",
+						"/terms-of-service", "/privacy-policy",
+						"/.well-known/**").permitAll()
 					.anyRequest().authenticated()
 			)
 			.cors(Customizer.withDefaults())
