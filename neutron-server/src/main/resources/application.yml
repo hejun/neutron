@@ -1,5 +1,8 @@
 server:
   port: 9000
+  tomcat:
+    remoteip:
+      protocol-header: "X-Forwarded-Proto"
 spring:
   application:
     name: Neutron
