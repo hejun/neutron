@@ -1,5 +1,7 @@
 package io.github.hejun.neutron.controller;
 
+import io.github.hejun.neutron.entity.Tenant;
+import io.github.hejun.neutron.service.ITenantService;
 import io.github.hejun.neutron.util.ContextUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ import java.util.Set;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class PageController {
 
+	private final ITenantService tenantService;
 	private final RegisteredClientRepository registeredClientRepository;
 	private final OAuth2AuthorizationConsentService authorizationConsentService;
 
@@ -39,7 +42,10 @@ public class PageController {
 	public String login(Model model) {
 		String issuer = ContextUtil.getIssuer();
 		if (issuer != null) {
-			model.addAttribute("issuer", issuer);
+			Tenant tenant = tenantService.findByIssuer(issuer);
+			if (tenant != null) {
+				model.addAttribute("tenantName", tenant.getName());
+			}
 		}
 		return "login";
 	}
@@ -52,6 +58,10 @@ public class PageController {
 		String issuer = ContextUtil.getIssuer();
 		if (issuer != null) {
 			model.addAttribute("issuer", issuer);
+			Tenant tenant = tenantService.findByIssuer(issuer);
+			if (tenant != null) {
+				model.addAttribute("tenantName", tenant.getName());
+			}
 		}
 
 		Set<String> scopesToApprove = new HashSet<>();

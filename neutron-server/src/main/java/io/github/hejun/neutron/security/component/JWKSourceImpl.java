@@ -8,18 +8,27 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import io.github.hejun.neutron.entity.Tenant;
+import io.github.hejun.neutron.service.ITenantService;
 import io.github.hejun.neutron.util.ContextUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 多租户 JWKSource
@@ -31,7 +40,9 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class JWKSourceImpl implements JWKSource<SecurityContext> {
 
-	private final JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(this.generateJWKs()));
+	private final ITenantService tenantService;
+
+	private final Map<String, List<JWK>> jwkCache = new HashMap<>();
 
 	@Override
 	public List<JWK> get(JWKSelector jwkSelector, SecurityContext context) throws KeySourceException {
@@ -39,29 +50,28 @@ public class JWKSourceImpl implements JWKSource<SecurityContext> {
 		if (log.isDebugEnabled()) {
 			log.debug("get, current issuer: {}", issuer);
 		}
-		return jwkSource.get(jwkSelector, context);
-	}
-
-	private RSAKey generateJWKs() {
-		KeyPair keyPair = this.generateKeyPair();
-		PublicKey publicKey = keyPair.getPublic();
-		PrivateKey privateKey = keyPair.getPrivate();
-
-		return new RSAKey.Builder((RSAPublicKey) publicKey).privateKey(privateKey)
-			.keyID("tmp")
-			.build();
-	}
-
-	private KeyPair generateKeyPair() {
-		KeyPair keyPair;
-		try {
-			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-			keyPairGenerator.initialize(2048);
-			keyPair = keyPairGenerator.generateKeyPair();
-		} catch (Exception ex) {
-			throw new IllegalStateException(ex);
+		if (jwkCache.containsKey(issuer)) {
+			return jwkCache.get(issuer);
 		}
-		return keyPair;
+
+		try {
+			Tenant tenant = tenantService.findByIssuer(issuer);
+
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			PrivateKey privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(tenant.getPrivateKey())));
+			PublicKey publicKey = keyFactory.generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(tenant.getPublicKey())));
+
+			RSAKey rsaKey = new RSAKey.Builder((RSAPublicKey) publicKey).privateKey(privateKey)
+				.keyID(String.valueOf(tenant.getId()))
+				.build();
+			JWKSet jwkSet = new JWKSet(rsaKey);
+			JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(jwkSet);
+
+			this.jwkCache.put(issuer, jwkSource.get(jwkSelector, context));
+			return jwkSource.get(jwkSelector, context);
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			throw new AuthenticationServiceException(e.getMessage());
+		}
 	}
 
 }

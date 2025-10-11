@@ -10,9 +10,12 @@ import java.util.List;
  * @author HeJun
  */
 @ConfigurationProperties(prefix = "init")
-public record InitializeProperties(Client client, User user) {
+public record InitializeProperties(Tenant tenant, Client client, User user) {
 
-	public record Client(String id, String name, List<String> redirectUris) {
+	public record Tenant(String name, String issuer) {
+	}
+
+	public record Client(String clientId, String name, List<String> redirectUris) {
 	}
 
 	public record User(String name, String password) {
