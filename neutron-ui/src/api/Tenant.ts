@@ -14,7 +14,7 @@ export interface Tenant {
 
   privateKey?: string
 
-  enabled?: string
+  enabled?: boolean
 
   createDate?: string
 }
