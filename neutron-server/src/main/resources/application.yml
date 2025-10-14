@@ -5,19 +5,48 @@ server:
       protocol-header: "X-Forwarded-Proto"
 spring:
   application:
-    name: Neutron
+    name: neutron
   profiles:
     active: dev
   security:
     oauth2:
       authorizationserver:
         multiple-issuers-allowed: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${db.url}:${db.port}/${db.database}?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&allowMultiQueries=true
+    username: ${db.username}
+    password: ${db.password}
+    hikari:
+      connection-test-query: "SELECT 1"
+  data:
+    redis:
+      host: ${redis.host}
+      port: ${redis.port}
+      database: ${redis.database}
+      password: ${redis.password}
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+  cache:
+    redis:
+      key-prefix: ${spring.application.name}
+      time-to-live: 1800000
+mybatis-plus:
+  configuration:
+    default-executor-type: reuse
 ---
 spring:
   config:
     activate:
       on-profile: dev
     import: file:neutron-server/.env.development[.yml]
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 logging:
   level:
     'io.github.hejun.neutron': trace
