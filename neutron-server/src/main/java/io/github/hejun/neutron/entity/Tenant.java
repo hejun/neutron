@@ -29,6 +29,18 @@ public class Tenant {
 
     private String privateKey;
 
+    private String termsOfServiceTitle;
+
+    private String termsOfServiceDesc;
+
+    private String termsOfServiceContent;
+
+    private String privacyPolicyTitle;
+
+    private String privacyPolicyDesc;
+
+    private String privacyPolicyContent;
+
     private Boolean enabled;
 
     private Date createDate;

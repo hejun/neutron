@@ -41,6 +41,30 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: terms_of_service_title
+                  type: varchar(50)
+                  remarks: "服务协议-标题"
+              - column:
+                  name: terms_of_service_desc
+                  type: varchar(100)
+                  remarks: "服务协议-描述"
+              - column:
+                  name: terms_of_service_content
+                  type: text
+                  remarks: "服务协议-内容"
+              - column:
+                  name: privacy_policy_title
+                  type: varchar(50)
+                  remarks: "隐私条款-标题"
+              - column:
+                  name: privacy_policy_desc
+                  type: varchar(100)
+                  remarks: "隐私条款-描述"
+              - column:
+                  name: privacy_policy_content
+                  type: text
+                  remarks: "隐私条款-内容"
+              - column:
                   name: enabled
                   type: bit(1)
                   remarks: "是否启用, 0: 否, 1: 是. 默认: 1"

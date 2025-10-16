@@ -40,13 +40,7 @@ public class PageController {
 
 	@GetMapping("/login")
 	public String login(Model model) {
-		String issuer = ContextUtil.getIssuer();
-		if (issuer != null) {
-			Tenant tenant = tenantService.findByIssuer(issuer);
-			if (tenant != null) {
-				model.addAttribute("tenantName", tenant.getName());
-			}
-		}
+		this.addTenantInfo(model);
 		return "login";
 	}
 
@@ -55,14 +49,7 @@ public class PageController {
 						  @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
 						  @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
 						  @RequestParam(OAuth2ParameterNames.STATE) String state) {
-		String issuer = ContextUtil.getIssuer();
-		if (issuer != null) {
-			model.addAttribute("issuer", issuer);
-			Tenant tenant = tenantService.findByIssuer(issuer);
-			if (tenant != null) {
-				model.addAttribute("tenantName", tenant.getName());
-			}
-		}
+		this.addTenantInfo(model);
 
 		Set<String> scopesToApprove = new HashSet<>();
 		Set<String> previouslyApprovedScopes = new HashSet<>();
@@ -103,12 +90,32 @@ public class PageController {
 	}
 
 	@GetMapping("/terms-of-service")
-	public String termsOfService() {
+	public String termsOfService(Model model) {
+		this.addTenantInfo(model);
+		String issuer = ContextUtil.getIssuer();
+		if (StringUtils.hasText(issuer)) {
+			Tenant tenant = tenantService.findByIssuer(ContextUtil.getIssuer());
+			if (tenant != null) {
+				model.addAttribute("termsOfServiceTitle", tenant.getTermsOfServiceTitle());
+				model.addAttribute("termsOfServiceDesc", tenant.getTermsOfServiceDesc());
+				model.addAttribute("termsOfServiceContent", tenant.getTermsOfServiceContent());
+			}
+		}
 		return "termsOfService";
 	}
 
 	@GetMapping("/privacy-policy")
-	public String privacyPolicy() {
+	public String privacyPolicy(Model model) {
+		this.addTenantInfo(model);
+		String issuer = ContextUtil.getIssuer();
+		if (StringUtils.hasText(issuer)) {
+			Tenant tenant = tenantService.findByIssuer(ContextUtil.getIssuer());
+			if (tenant != null) {
+				model.addAttribute("privacyPolicyTitle", tenant.getPrivacyPolicyTitle());
+				model.addAttribute("privacyPolicyDesc", tenant.getPrivacyPolicyDesc());
+				model.addAttribute("privacyPolicyContent", tenant.getPrivacyPolicyContent());
+			}
+		}
 		return "privacyPolicy";
 	}
 
@@ -121,6 +128,17 @@ public class PageController {
 	@GetMapping("/.well-known/appspecific/com.chrome.devtools.json")
 	public Map<String, Object> appSpecific() {
 		return Map.of();
+	}
+
+	private void addTenantInfo(Model model){
+		String issuer = ContextUtil.getIssuer();
+		if (issuer != null) {
+			model.addAttribute("issuer", issuer);
+			Tenant tenant = tenantService.findByIssuer(issuer);
+			if (tenant != null) {
+				model.addAttribute("tenantName", tenant.getName());
+			}
+		}
 	}
 
 }

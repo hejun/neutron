@@ -12,15 +12,12 @@
 
 <body>
 <div class="header">
-  <span>Neutron</span>
+  <span th:text="${tenantName}">Neutron</span>
 </div>
 <div class="content">
-  <div class="title">隐私条款</div>
-  <div class="desc">生效日期: 2025-10-01 起</div>
-  <div class="agreement-box">
-    <label>提示条款</label>
-    <p>您的信任对我们非常重要，我们深知用户信息安全的重要性，我们将按照法律法规要求，采取安全保护措施，保护您的用户信息安全可控。一旦您开始使用我们的服务，将被视为对本条款内容的接受和认可。</p>
-  </div>
+  <div class="title" th:text="${privacyPolicyTitle}"></div>
+  <div class="desc" th:text="${privacyPolicyDesc}"></div>
+  <div class="agreement-box" th:utext="${privacyPolicyContent}"></div>
 </div>
 </body>
 

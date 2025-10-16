@@ -62,11 +62,3 @@ body {
     width: 100%;
     z-index: 20
 }
-
-.content .agreement-box label {
-    font-weight: 500;
-}
-
-.content .agreement-box p {
-    text-indent: 24px;
-}
