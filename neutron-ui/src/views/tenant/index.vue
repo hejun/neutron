@@ -19,18 +19,7 @@ const queryRef = ref({
   enabled: undefined
 })
 
-const editRef = ref<Tenant>({
-  id: undefined,
-  name: '',
-  issuer: '',
-  termsOfServiceTitle: '',
-  termsOfServiceDesc: '',
-  termsOfServiceContent: '',
-  privacyPolicyTitle: '',
-  privacyPolicyDesc: '',
-  privacyPolicyContent: '',
-  enabled: true
-})
+const editRef = ref<Tenant>()
 
 function loadTenantPage() {
   tableLoadingRef.value = true
@@ -81,18 +70,18 @@ async function submitEditTenant(editTenantForm: FormInstance | null) {
   await editTenantForm.validate(valid => {
     if (valid) {
       editDialogLoadingRef.value = true
+      editDialogVisibleRef.value = false
       let resp
       if (editRef?.value?.id) {
         resp = updateTenant(editRef.value)
       } else {
-        resp = saveTenant(editRef.value)
+        resp = saveTenant(editRef.value!)
       }
       resp
         // eslint-disable-next-line no-alert
         .catch(err => alert(err))
         .then(() => resetTenantForm())
         .finally(() => (editDialogLoadingRef.value = false))
-        .then(() => (editDialogVisibleRef.value = false))
         .then(() => loadTenantPage())
     }
   })
@@ -202,6 +191,7 @@ onMounted(() => loadTenantPage())
         </template>
       </el-table-column>
       <el-table-column prop="createDate" label="创建时间" width="160" />
+      <el-table-column prop="lastModifiedDate" label="最后更新时间" width="160" />
       <el-table-column fixed="right" label="操作" width="144">
         <template #default="scope">
           <el-button link type="primary" size="small">详情</el-button>

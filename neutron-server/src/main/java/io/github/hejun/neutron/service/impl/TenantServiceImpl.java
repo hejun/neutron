@@ -34,9 +34,10 @@ public class TenantServiceImpl implements ITenantService {
 	@Override
 	public IPage<Tenant> findPage(Long current, Long size, String name, Boolean enabled) {
 		return tenantMapper.selectPage(Page.of(current, size), Wrappers.<Tenant>lambdaQuery()
-			.select(Tenant::getId, Tenant::getName, Tenant::getIssuer, Tenant::getEnabled, Tenant::getCreateDate)
+			.select(Tenant::getId, Tenant::getName, Tenant::getIssuer, Tenant::getEnabled, Tenant::getCreateDate, Tenant::getLastModifiedDate)
 			.like(StringUtils.hasText(name), Tenant::getName, name)
 			.eq(Objects.nonNull(enabled), Tenant::getEnabled, enabled)
+			.orderByDesc(Tenant::getId)
 		);
 	}
 
@@ -74,7 +75,7 @@ public class TenantServiceImpl implements ITenantService {
 	@Override
 	@CacheEvict(cacheNames = "tenant:issuer", key = "#tenant.issuer?:''")
 	public Tenant update(Tenant tenant) {
-		if (tenant == null || tenant.getId() == null){
+		if (tenant == null || tenant.getId() == null) {
 			return null;
 		}
 		// 不允许更新公私钥

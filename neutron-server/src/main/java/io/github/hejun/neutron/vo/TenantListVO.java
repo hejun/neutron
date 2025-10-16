@@ -29,4 +29,7 @@ public class TenantListVO {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private Date createDate;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+	private Date lastModifiedDate;
+
 }
