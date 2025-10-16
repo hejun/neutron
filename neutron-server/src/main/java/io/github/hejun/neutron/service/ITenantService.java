@@ -14,6 +14,10 @@ public interface ITenantService {
 
 	Tenant findByIssuer(String issuer);
 
+	Tenant findById(Long id);
+
 	Tenant save(Tenant tenant);
+
+	Tenant update(Tenant tenant);
 
 }

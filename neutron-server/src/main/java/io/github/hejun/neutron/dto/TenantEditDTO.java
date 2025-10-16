@@ -12,7 +12,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class TenantSaveDTO {
+public class TenantEditDTO {
+
+	private Long id;
 
 	@NotBlank(message = "名称不可为空")
 	@Size(min = 2, max = 50, message = "名称应在2-50个字之间")
@@ -21,6 +23,18 @@ public class TenantSaveDTO {
 	@NotBlank(message = "Issuer不可为空")
 	@Size(min = 2, max = 100, message = "Issuer应在2-100个字之间")
 	private String issuer;
+
+	private String termsOfServiceTitle;
+
+	private String termsOfServiceDesc;
+
+	private String termsOfServiceContent;
+
+	private String privacyPolicyTitle;
+
+	private String privacyPolicyDesc;
+
+	private String privacyPolicyContent;
 
 	private Boolean enabled;
 

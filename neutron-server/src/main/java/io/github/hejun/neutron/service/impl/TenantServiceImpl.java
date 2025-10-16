@@ -8,6 +8,7 @@ import io.github.hejun.neutron.mapper.TenantMapper;
 import io.github.hejun.neutron.service.ITenantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -49,6 +50,14 @@ public class TenantServiceImpl implements ITenantService {
 	}
 
 	@Override
+	public Tenant findById(Long id) {
+		if (id == null) {
+			return null;
+		}
+		return tenantMapper.selectById(id);
+	}
+
+	@Override
 	public Tenant save(Tenant tenant) {
 		if (tenant == null || !StringUtils.hasText(tenant.getIssuer())) {
 			return null;
@@ -59,6 +68,19 @@ public class TenantServiceImpl implements ITenantService {
 		tenant.setPublicKey(Base64.getEncoder().encodeToString(publicKey.getEncoded()));
 		tenant.setPrivateKey(Base64.getEncoder().encodeToString(privateKey.getEncoded()));
 		tenantMapper.insert(tenant);
+		return tenant;
+	}
+
+	@Override
+	@CacheEvict(cacheNames = "tenant:issuer", key = "#tenant.issuer?:''")
+	public Tenant update(Tenant tenant) {
+		if (tenant == null || tenant.getId() == null){
+			return null;
+		}
+		// 不允许更新公私钥
+		tenant.setPublicKey(null);
+		tenant.setPrivateKey(null);
+		tenantMapper.updateById(tenant);
 		return tenant;
 	}
 

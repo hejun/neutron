@@ -2,9 +2,10 @@ package io.github.hejun.neutron.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.github.hejun.neutron.converter.TenantConverter;
-import io.github.hejun.neutron.dto.TenantSaveDTO;
+import io.github.hejun.neutron.dto.TenantEditDTO;
 import io.github.hejun.neutron.entity.Tenant;
 import io.github.hejun.neutron.service.ITenantService;
+import io.github.hejun.neutron.vo.TenantDetailVO;
 import io.github.hejun.neutron.vo.TenantListVO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -35,10 +36,23 @@ public class TenantController {
 		return tenantService.findPage(current, size, name, enabled).convert(tenantConverter::convertToList);
 	}
 
+	@GetMapping("/{id}")
+	public TenantDetailVO findById(@PathVariable Long id) {
+		return tenantConverter.convertToDetail(tenantService.findById(id));
+	}
+
 	@PostMapping
-	public Map<String, Object> save(@Valid @RequestBody TenantSaveDTO tenantSaveDTO) {
-		Tenant tenant = tenantConverter.convert(tenantSaveDTO);
+	public Map<String, Object> save(@Valid @RequestBody TenantEditDTO tenantEditDTO) {
+		Tenant tenant = tenantConverter.convert(tenantEditDTO);
 		tenant = tenantService.save(tenant);
+		return Map.of("id", String.valueOf(tenant.getId()));
+	}
+
+
+	@PutMapping
+	public Map<String, Object> update(@Valid @RequestBody TenantEditDTO tenantEditDTO) {
+		Tenant tenant = tenantConverter.convert(tenantEditDTO);
+		tenant = tenantService.update(tenant);
 		return Map.of("id", String.valueOf(tenant.getId()));
 	}
 

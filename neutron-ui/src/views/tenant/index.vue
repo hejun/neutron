@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
-import type { FormRules } from 'element-plus'
+import { onMounted, reactive, ref, useTemplateRef } from 'vue'
+import type { FormInstance, FormRules } from 'element-plus'
 import type Page from '@/api/Page.ts'
-import { findTenantPage, saveTenant, type Tenant } from '@/api/Tenant.ts'
+import { findTenantById, findTenantPage, saveTenant, type Tenant, updateTenant } from '@/api/Tenant.ts'
 
-const loadingRef = ref(true)
-const resRef = ref<Page<Tenant>>()
-const showEditDialogRef = ref(false)
+const tableLoadingRef = ref(true)
+const tableDataRef = ref<Page<Tenant>>()
+
+const editDialogVisibleRef = ref(false)
 const editDialogLoadingRef = ref(false)
+const editDialogTitleRef = ref('')
+const editTenantFormRef = useTemplateRef<FormInstance>('editTenantFormRef')
 
 const queryRef = ref({
   current: 1,
@@ -20,16 +23,22 @@ const editRef = ref<Tenant>({
   id: undefined,
   name: '',
   issuer: '',
+  termsOfServiceTitle: '',
+  termsOfServiceDesc: '',
+  termsOfServiceContent: '',
+  privacyPolicyTitle: '',
+  privacyPolicyDesc: '',
+  privacyPolicyContent: '',
   enabled: true
 })
 
 function loadTenantPage() {
-  loadingRef.value = true
+  tableLoadingRef.value = true
   findTenantPage(queryRef.value.current, queryRef.value.size, queryRef.value.name, queryRef.value.enabled)
-    .then(data => (resRef.value = data))
+    .then(data => (tableDataRef.value = data))
     // eslint-disable-next-line no-alert
     .catch(err => alert(err))
-    .finally(() => (loadingRef.value = false))
+    .finally(() => (tableLoadingRef.value = false))
 }
 
 function handleCurrentChange(current: number) {
@@ -42,21 +51,51 @@ function handleSizeChange(size: number) {
   loadTenantPage()
 }
 
-function editTenant(id?: string) {
+async function editTenant(id?: string) {
+  resetTenantForm()
+  editDialogTitleRef.value = '新增租户'
   if (id) {
-    editRef.value.id = id
+    editDialogTitleRef.value = '修改租户'
+    editRef.value = await findTenantById(id)
   }
-  showEditDialogRef.value = true
+  editDialogVisibleRef.value = true
 }
 
-function submitEditTenant() {
-  editDialogLoadingRef.value = true
-  saveTenant(editRef.value)
-    // eslint-disable-next-line no-alert
-    .catch(err => alert(err))
-    .finally(() => (editDialogLoadingRef.value = false))
-    .then(() => (showEditDialogRef.value = false))
-    .then(() => loadTenantPage())
+function resetTenantForm() {
+  editRef.value = {
+    id: undefined,
+    name: '',
+    issuer: '',
+    termsOfServiceTitle: '',
+    termsOfServiceDesc: '',
+    termsOfServiceContent: '',
+    privacyPolicyTitle: '',
+    privacyPolicyDesc: '',
+    privacyPolicyContent: '',
+    enabled: true
+  }
+}
+
+async function submitEditTenant(editTenantForm: FormInstance | null) {
+  if (!editTenantForm) return
+  await editTenantForm.validate(valid => {
+    if (valid) {
+      editDialogLoadingRef.value = true
+      let resp
+      if (editRef?.value?.id) {
+        resp = updateTenant(editRef.value)
+      } else {
+        resp = saveTenant(editRef.value)
+      }
+      resp
+        // eslint-disable-next-line no-alert
+        .catch(err => alert(err))
+        .then(() => resetTenantForm())
+        .finally(() => (editDialogLoadingRef.value = false))
+        .then(() => (editDialogVisibleRef.value = false))
+        .then(() => loadTenantPage())
+    }
+  })
 }
 
 const editValidRules = reactive<FormRules<Tenant>>({
@@ -95,6 +134,30 @@ const editValidRules = reactive<FormRules<Tenant>>({
     {
       required: true
     }
+  ],
+  termsOfServiceTitle: [
+    {
+      max: 50,
+      message: '标题应在50个字以内'
+    }
+  ],
+  termsOfServiceDesc: [
+    {
+      max: 100,
+      message: '描述应在100个字以内'
+    }
+  ],
+  privacyPolicyTitle: [
+    {
+      max: 50,
+      message: '标题应在50个字以内'
+    }
+  ],
+  privacyPolicyDesc: [
+    {
+      max: 100,
+      message: '描述应在100个字以内'
+    }
   ]
 })
 
@@ -128,7 +191,7 @@ onMounted(() => loadTenantPage())
       </el-icon>
       <span>新增</span>
     </el-button>
-    <el-table v-loading="loadingRef" element-loading-text="查询中..." :data="resRef?.records" class="table">
+    <el-table v-loading="tableLoadingRef" element-loading-text="查询中..." :data="tableDataRef?.records" class="table">
       <el-table-column prop="id" label="ID" width="176" />
       <el-table-column prop="name" label="名称" width="240" />
       <el-table-column prop="issuer" label="Issuer" show-overflow-tooltip />
@@ -139,11 +202,10 @@ onMounted(() => loadTenantPage())
         </template>
       </el-table-column>
       <el-table-column prop="createDate" label="创建时间" width="160" />
-      <el-table-column fixed="right" label="操作" width="184">
+      <el-table-column fixed="right" label="操作" width="144">
         <template #default="scope">
           <el-button link type="primary" size="small">详情</el-button>
           <el-button link type="primary" size="small" @click="editTenant(scope.row.id)">修改</el-button>
-          <el-button link type="primary" size="small">禁用</el-button>
           <el-button link type="primary" size="small">删除</el-button>
         </template>
       </el-table-column>
@@ -151,18 +213,18 @@ onMounted(() => loadTenantPage())
     <el-pagination
       layout="->, total, sizes, prev, pager, next"
       :page-sizes="[10, 15, 50, 100, 200]"
-      :current-page="resRef?.current"
-      :page-size="resRef?.size"
-      :total="resRef?.total"
+      :current-page="tableDataRef?.current"
+      :page-size="tableDataRef?.size"
+      :total="tableDataRef?.total"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       class="pagination"
     />
   </el-card>
-  <el-dialog v-model="showEditDialogRef">
+  <el-dialog v-model="editDialogVisibleRef" :title="editDialogTitleRef" destroy-on-close>
     <template #footer>
       <div class="dialog-footer">
-        <el-form :model="editRef" label-width="auto" :rules="editValidRules">
+        <el-form ref="editTenantFormRef" :model="editRef" label-width="auto" :rules="editValidRules">
           <el-form-item label="名称" prop="name">
             <el-input v-model="editRef.name" placeholder="请输入" />
           </el-form-item>
@@ -172,8 +234,26 @@ onMounted(() => loadTenantPage())
           <el-form-item label="是否启用" prop="enabled">
             <el-switch v-model="editRef.enabled" />
           </el-form-item>
+          <el-form-item label="服务协议标题" prop="termsOfServiceTitle">
+            <el-input v-model="editRef.termsOfServiceTitle" placeholder="请输入" />
+          </el-form-item>
+          <el-form-item label="服务协议描述" prop="termsOfServiceDesc">
+            <el-input v-model="editRef.termsOfServiceDesc" placeholder="请输入" />
+          </el-form-item>
+          <el-form-item label="服务协议内容" prop="termsOfServiceContent">
+            <el-input v-model="editRef.termsOfServiceContent" type="textarea" placeholder="请输入" />
+          </el-form-item>
+          <el-form-item label="隐私条款标题" prop="privacyPolicyTitle">
+            <el-input v-model="editRef.privacyPolicyTitle" placeholder="请输入" />
+          </el-form-item>
+          <el-form-item label="隐私条款描述" prop="privacyPolicyDesc">
+            <el-input v-model="editRef.privacyPolicyDesc" placeholder="请输入" />
+          </el-form-item>
+          <el-form-item label="隐私条款内容" prop="privacyPolicyContent">
+            <el-input v-model="editRef.privacyPolicyContent" type="textarea" placeholder="请输入" />
+          </el-form-item>
         </el-form>
-        <el-button type="primary" @click="submitEditTenant">确认</el-button>
+        <el-button type="primary" @click="submitEditTenant(editTenantFormRef)">确认</el-button>
       </div>
     </template>
   </el-dialog>
