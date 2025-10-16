@@ -216,31 +216,31 @@ onMounted(() => loadTenantPage())
       <div class="dialog-footer">
         <el-form ref="editTenantFormRef" :model="editRef" label-width="auto" :rules="editValidRules">
           <el-form-item label="名称" prop="name">
-            <el-input v-model="editRef.name" placeholder="请输入" />
+            <el-input v-model="editRef!.name" placeholder="请输入" />
           </el-form-item>
           <el-form-item label="Issuer" prop="issuer">
-            <el-input v-model="editRef.issuer" placeholder="请输入" />
+            <el-input v-model="editRef!.issuer" placeholder="请输入" />
           </el-form-item>
           <el-form-item label="是否启用" prop="enabled">
-            <el-switch v-model="editRef.enabled" />
+            <el-switch v-model="editRef!.enabled" />
           </el-form-item>
           <el-form-item label="服务协议标题" prop="termsOfServiceTitle">
-            <el-input v-model="editRef.termsOfServiceTitle" placeholder="请输入" />
+            <el-input v-model="editRef!.termsOfServiceTitle" placeholder="请输入" />
           </el-form-item>
           <el-form-item label="服务协议描述" prop="termsOfServiceDesc">
-            <el-input v-model="editRef.termsOfServiceDesc" placeholder="请输入" />
+            <el-input v-model="editRef!.termsOfServiceDesc" placeholder="请输入" />
           </el-form-item>
           <el-form-item label="服务协议内容" prop="termsOfServiceContent">
-            <el-input v-model="editRef.termsOfServiceContent" type="textarea" placeholder="请输入" />
+            <el-input v-model="editRef!.termsOfServiceContent" type="textarea" placeholder="请输入" />
           </el-form-item>
           <el-form-item label="隐私条款标题" prop="privacyPolicyTitle">
-            <el-input v-model="editRef.privacyPolicyTitle" placeholder="请输入" />
+            <el-input v-model="editRef!.privacyPolicyTitle" placeholder="请输入" />
           </el-form-item>
           <el-form-item label="隐私条款描述" prop="privacyPolicyDesc">
-            <el-input v-model="editRef.privacyPolicyDesc" placeholder="请输入" />
+            <el-input v-model="editRef!.privacyPolicyDesc" placeholder="请输入" />
           </el-form-item>
           <el-form-item label="隐私条款内容" prop="privacyPolicyContent">
-            <el-input v-model="editRef.privacyPolicyContent" type="textarea" placeholder="请输入" />
+            <el-input v-model="editRef!.privacyPolicyContent" type="textarea" placeholder="请输入" />
           </el-form-item>
         </el-form>
         <el-button type="primary" @click="submitEditTenant(editTenantFormRef)">确认</el-button>
