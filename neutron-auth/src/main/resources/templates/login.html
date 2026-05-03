@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="x-ua-compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>登录</title>
+  <link rel="icon" href="data:;">
+  <link rel="stylesheet" th:href="@{/assets/style/login.css}">
+</head>
+
+<body>
+<div>
+  <form th:action="@{/login/account}" method="post">
+    <div>
+      <input type="text" name="username" placeholder="账户" required/>
+    </div>
+    <div>
+      <input type="password" name="password" placeholder="密码" required/>
+    </div>
+    <div th:if="${param?.error != null && session?.SPRING_SECURITY_LAST_EXCEPTION != null}">
+      <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION?.message}"></span>
+    </div>
+    <button type="submit">立即登录</button>
+  </form>
+</div>
+</body>
+
+</html>

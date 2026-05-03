@@ -1,0 +1,122 @@
+server:
+  port: 9000
+  tomcat:
+    remoteip:
+      protocol-header: "X-Forwarded-Proto"
+spring:
+  profiles:
+    active: dev
+  application:
+    name: neutron-auth
+  jackson:
+    time-zone: GMT+8
+    date-format: "yyyy-MM-dd HH:mm"
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${datasource.url}:${datasource.port}/${datasource.database}?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&allowMultiQueries=true
+    username: ${datasource.username}
+    password: ${datasource.password}
+    hikari:
+      connection-test-query: "SELECT 1"
+      minimum-idle: 2
+      maximum-pool-size: 20
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+  jpa:
+    database: mysql
+    hibernate:
+      naming:
+        implicit-strategy: org.springframework.boot.hibernate.SpringImplicitNamingStrategy
+  data:
+    redis:
+      host: ${redis.host}
+      port: ${redis.port}
+      database: ${redis.database}
+      password: ${redis.password}
+  security:
+    oauth2:
+      authorizationserver:
+        multiple-issuers-allowed: true
+  liquibase:
+    parameters:
+      init-tenant-id: ${init.tenant.id}
+      init-tenant-name: ${init.tenant.name}
+      init-tenant-issuer: ${init.tenant.issuer}
+      init-tenant-public_key: ${init.tenant.public_key}
+      init-tenant-private_key: ${init.tenant.private_key}
+      init-user-id: ${init.user.id}
+      init-user-username: ${init.user.username}
+      init-user-password: ${init.user.password}
+      init-user-nickname: ${init.user.nickname}
+      init-client-id: ${init.client.id}
+      init-client-client_id: ${init.client.client_id}
+      init-client-client_secret: ${init.client.client_secret}
+      init-client-client_name: ${init.client.client_name}
+      init-client-client_authentication_methods: ${init.client.client_authentication_methods}
+      init-client-authorization_grant_types: ${init.client.authorization_grant_types}
+      init-client-redirect_uris: ${init.client.redirect_uris}
+      init-client-post_logout_redirect_uris: ${init.client.post_logout_redirect_uris}
+      init-client-scopes: ${init.client.scopes}
+      init-client-require_proof_key: ${init.client.require_proof_key}
+      init-client-require_authorization_consent: ${init.client.require_authorization_consent}
+  config:
+    import:
+      - nacos:${spring.application.name}.yml?group=${spring.profiles.active}&refreshEnable=true
+  cloud:
+    nacos:
+      username: ${nacos.username}
+      password: ${nacos.password}
+      config:
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${spring.profiles.active}
+      discovery:
+        server-addr: ${spring.cloud.nacos.config.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${spring.profiles.active}
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import: file:neutron-auth/.env.development[.yml]
+  cloud:
+    nacos:
+      discovery:
+        ip: 127.0.0.1
+  thymeleaf:
+    cache: false
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
+    io.github.hejun.auth: debug
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://127.0.0.1:4317
+          transport: grpc
+    logging:
+      export:
+        otlp:
+          endpoint: http://127.0.0.1:4317
+          transport: grpc
+  otlp:
+    metrics:
+      export:
+        url: http://127.0.0.1:4318/v1/metrics
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: file:.env.production[.yml]

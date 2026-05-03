@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>授权</title>
+  <link rel="icon" href="data:;">
+  <link rel="stylesheet" th:href="@{/assets/style/consent.css}">
+</head>
+
+<body>
+<div>
+  <div>
+    应用 <label th:text="${clientName}"></label> 想要访问你的账户 <label th:text="${principalName}"></label>
+  </div>
+  <div><span>请确认</span></div>
+  <form th:action="@{{issuer}/oauth2/authorize(issuer=${issuer})}" method="post">
+    <input type="hidden" name="client_id" th:value="${clientId}">
+    <input type="hidden" name="state" th:value="${state}">
+    <ul>
+      <li th:each="scope:${scopes}">
+        <span th:text="${scope}"></span>
+        <input type="hidden" name="scope" th:value="${scope}">
+      </li>
+      <li th:each="scope:${previouslyApprovedScopes}">
+        <span th:text="${scope}"></span>
+        <input type="hidden" name="scope" th:value="${scope}">
+      </li>
+    </ul>
+    <button type="submit">确认授权</button>
+  </form>
+</div>
+</body>
+
+</html>

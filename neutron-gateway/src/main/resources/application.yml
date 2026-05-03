@@ -1,0 +1,67 @@
+server:
+  port: 8080
+  forward-headers-strategy: native
+spring:
+  profiles:
+    active: dev
+  application:
+    name: neutron-gateway
+  jackson:
+    time-zone: GMT+8
+    date-format: "yyyy-MM-dd HH:mm"
+  threads:
+    virtual:
+      enabled: true
+  config:
+    import:
+      - nacos:${spring.application.name}.yml?group=${spring.profiles.active}&refreshEnable=true
+  cloud:
+    nacos:
+      username: ${nacos.username}
+      password: ${nacos.password}
+      config:
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${spring.profiles.active}
+      discovery:
+        server-addr: ${spring.cloud.nacos.config.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${spring.profiles.active}
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import: file:neutron-gateway/.env.development[.yml]
+  cloud:
+    nacos:
+      discovery:
+        ip: 127.0.0.1
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://127.0.0.1:4317
+          transport: grpc
+    logging:
+      export:
+        otlp:
+          endpoint: http://127.0.0.1:4317
+          transport: grpc
+  otlp:
+    metrics:
+      export:
+        url: http://127.0.0.1:4318/v1/metrics
+logging:
+  level:
+    org.springframework.security: trace
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: file:.env.production[.yml]

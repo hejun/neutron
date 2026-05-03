@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: /db/changelog/db.schema-0.0.1-SNAPSHOT.yaml
+  - include:
+      file: /db/changelog/db.data-0.0.1-SNAPSHOT.yaml
