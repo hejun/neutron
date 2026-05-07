@@ -45,6 +45,9 @@
 
   <modules>
     <module>neutron-common</module>
+    <module>neutron-auth</module>
+    <module>neutron-gateway</module>
+    <module>neutron-notify</module>
   </modules>
 
   <dependencyManagement>

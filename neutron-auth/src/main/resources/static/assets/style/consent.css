@@ -1,0 +1,66 @@
+@charset "UTF-8";
+
+.content .consent-box {
+    display: flex;
+    flex-direction: column;
+    width: 86%;
+    max-width: 500px;
+    box-shadow: 0 2px 4px 2px #00000014;
+}
+
+.content .consent-box .title {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px 0;
+    font-size: 1.15rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.content .consent-box .form-authorize {
+    padding: 30px 30px 0;
+    box-sizing: border-box;
+}
+
+.content .consent-box .form-authorize .desc {
+    padding-bottom: 10px;
+    font-weight: 500;
+    border-bottom: 1px solid #dde2e9;
+}
+
+.content .consent-box .form-authorize .desc .account {
+    color: rgb(22, 93, 255);
+}
+
+.content .consent-box .form-authorize .tip {
+    margin: 20px 0 10px 0;
+}
+
+.content .consent-box .form-authorize ul {
+    margin: 0;
+    padding-bottom: 10px;
+    list-style: disc;
+    border-bottom: 1px solid #dde2e9;
+}
+
+.content .consent-box .form-authorize ul li {
+    padding: 5px 0;
+}
+
+.content .consent-box .form-authorize button[type="submit"] {
+    display: block;
+    width: 100%;
+    max-width: 330px;
+    height: 38px;
+    margin: 20px auto;
+    border: none;
+    border-radius: 4px;
+    background: rgb(22, 93, 255);
+    color: white;
+    transition: background 0.1s ease-in-out;
+    cursor: pointer;
+}
+
+.content .consent-box .form-authorize button[type="submit"]:hover {
+    background: rgb(64, 128, 255);
+}

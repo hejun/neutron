@@ -1,0 +1,51 @@
+server:
+  port: 10010
+  forward-headers-strategy: framework
+spring:
+  profiles:
+    active: dev
+  application:
+    name: neutron-notify
+  jackson:
+    time-zone: GMT+8
+    date-format: "yyyy-MM-dd HH:mm"
+  threads:
+    virtual:
+      enabled: true
+  data:
+    redis:
+      host: ${redis.host}
+      port: ${redis.port}
+      database: ${redis.database}
+      password: ${redis.password}
+  config:
+    import:
+      - nacos:${spring.application.name}.yml?group=${spring.profiles.active}&refreshEnable=true
+      - nacos:neutron-global.yml?group=${spring.profiles.active}&refreshEnable=true
+  cloud:
+    nacos:
+      username: ${nacos.username}
+      password: ${nacos.password}
+      config:
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${spring.profiles.active}
+      discovery:
+        server-addr: ${spring.cloud.nacos.config.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${spring.profiles.active}
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import: file:neutron-notify/.env.development[.yml]
+logging:
+  level:
+    io.github.hejun.neutron.notify: trace
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: file:.env.production[.yml]

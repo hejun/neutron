@@ -1,0 +1,24 @@
+@use 'element-plus/theme-chalk/src/notification';
+@use 'element-plus/theme-chalk/src/message';
+@use 'element-plus/theme-chalk/src/message-box';
+@use 'element-plus/theme-chalk/src/overlay';
+@use 'element-plus/theme-chalk/src/dark/css-vars';
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family:
+    Inter, system-ui, Avenir, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    '微软雅黑', Arial, sans-serif;
+  font-size: var(--el-font-size-base);
+}

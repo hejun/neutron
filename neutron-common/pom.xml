@@ -18,6 +18,7 @@
     <module>neutron-common-core</module>
     <module>neutron-common-otlp</module>
     <module>neutron-common-persist</module>
+    <module>neutron-common-resource-server</module>
   </modules>
 
 </project>

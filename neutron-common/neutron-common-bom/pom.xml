@@ -13,6 +13,7 @@
     <neutron-common-core.version>0.0.1-SNAPSHOT</neutron-common-core.version>
     <neutron-common-otlp.version>0.0.1-SNAPSHOT</neutron-common-otlp.version>
     <neutron-common-persist.version>0.0.1-SNAPSHOT</neutron-common-persist.version>
+    <neutron-common-resource-server.version>0.0.1-SNAPSHOT</neutron-common-resource-server.version>
   </properties>
 
   <dependencyManagement>
@@ -31,6 +32,11 @@
         <groupId>io.github.hejun</groupId>
         <artifactId>neutron-common-persist</artifactId>
         <version>${neutron-common-persist.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.hejun</groupId>
+        <artifactId>neutron-common-resource-server</artifactId>
+        <version>${neutron-common-resource-server.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -1,0 +1,26 @@
+neutron:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          trusted-issuers:
+            - "http://localhost:9000"
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://127.0.0.1:4317
+          transport: grpc
+    logging:
+      export:
+        otlp:
+          endpoint: http://127.0.0.1:4317
+          transport: grpc
+  otlp:
+    metrics:
+      export:
+        url: http://127.0.0.1:4318/v1/metrics

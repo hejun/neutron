@@ -1,0 +1,18 @@
+neutron:
+  auth:
+    init:
+      tenant:
+        name: "Neutron"
+        issuer: "http://localhost:9000"
+      client:
+        client-id: "neutron"
+        client-secret: "neutron"
+        client-name: "Neutron"
+        redirect-uris:
+          - "http://localhost:5173/api/login/oauth2/code/neutron"
+        post-logout-redirect-uris:
+          - "http://localhost:5173"
+      user:
+        username: "root"
+        password: "Hj1234"
+        nickname: "管理员"

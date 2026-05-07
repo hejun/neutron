@@ -1,0 +1,79 @@
+@charset "UTF-8";
+
+.content .login-box {
+    display: flex;
+    flex-direction: row;
+    width: 86%;
+    max-width: 850px;
+    box-shadow: 0 2px 4px 2px #00000014;
+}
+
+.content .login-box .form-left {
+    width: 55%;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(60deg, rgb(22, 93, 255), rgb(141, 191, 255));
+}
+
+.content .login-box .form-left img {
+    width: 100%;
+}
+
+.content .login-box .form-right {
+    width: 45%;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.content .login-box .form-right .title {
+    padding: 8px 0;
+    font-size: 1.15rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.content .login-box .form-right .form-wrapper {
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.content .login-box .form-right .form-wrapper input[type="text"], .content .login-box .form-right .form-wrapper input[type="password"] {
+    width: 100%;
+    height: 38px;
+    padding: 0;
+    margin: 0 0 20px 0;
+    border: 1px solid #dde2e9;
+    border-radius: 4px;
+    background: none;
+    outline: none;
+    text-indent: 15px;
+}
+
+.content .login-box .form-right .form-wrapper input[type="text"]:focus, .content .login-box .form-right .form-wrapper input[type="password"]:focus {
+    border-color: rgb(22, 93, 255);
+}
+
+.content .login-box .form-right .form-wrapper input[type="text"]:-webkit-autofill, .content .login-box .form-right .form-wrapper input[type="password"]:-webkit-autofill {
+    box-shadow: 0 0 0 1000px white inset !important;
+}
+
+.content .login-box .form-right .form-wrapper .error {
+    margin: 0 0 20px 0;
+    font-size: 0.8rem;
+    color: rgb(245, 63, 63);
+}
+
+.content .login-box .form-right .form-wrapper button[type="submit"] {
+    width: 100%;
+    height: 38px;
+    border: none;
+    border-radius: 4px;
+    background: rgb(22, 93, 255);
+    color: white;
+    transition: background 0.1s ease-in-out;
+    cursor: pointer;
+}
+
+.content .login-box .form-right .form-wrapper button[type="submit"]:hover {
+    background: rgb(64, 128, 255);
+}
