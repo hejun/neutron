@@ -2,6 +2,7 @@ package io.github.hejun.neutron.notify.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.annotation.EnableRedisListeners;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
@@ -12,6 +13,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
  *
  * @author HeJun
  */
+@EnableRedisListeners
 @Configuration(proxyBeanMethods = false)
 public class RedisConfig {
 

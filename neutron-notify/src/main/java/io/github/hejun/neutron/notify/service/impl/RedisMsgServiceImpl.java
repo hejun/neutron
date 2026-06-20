@@ -15,14 +15,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.Nullable;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.annotation.RedisListener;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.PatternTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -43,7 +37,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RedisMsgServiceImpl implements IMsgService, MessageListener {
+public class RedisMsgServiceImpl implements IMsgService {
 
     private static final Map<String, SseEmitter> emitters = new HashMap<>();
     private static final String CHANNEL = "neutron.notify.msg";
@@ -91,18 +85,12 @@ public class RedisMsgServiceImpl implements IMsgService, MessageListener {
         redisTemplate.convertAndSend(CHANNEL, redisMsg);
     }
 
-    @Override
-    public void onMessage(Message message, byte @Nullable [] pattern) {
-        RedisMsgDTO msg = (RedisMsgDTO) redisTemplate.getValueSerializer().deserialize(message.getBody());
-        if (msg == null) {
-            log.error("msg is empty");
-            return;
-        }
-
+    @RedisListener(CHANNEL)
+    public void onMessage(RedisMsgDTO msg) {
         Context context = ExtendedContextPropagators
             .extractTextMapPropagationContext(msg.getTraceContext(), openTelemetry.getPropagators());
         Span span = tracer
-            .spanBuilder("handleMsg")
+            .spanBuilder(null)
             .setParent(context)
             .setSpanKind(SpanKind.CONSUMER)
             .startSpan();
@@ -127,14 +115,6 @@ public class RedisMsgServiceImpl implements IMsgService, MessageListener {
         } finally {
             span.end();
         }
-    }
-
-    @Bean
-    public RedisMessageListenerContainer messageListenerContainer(RedisConnectionFactory connectionFactory) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(this, new PatternTopic(CHANNEL));
-        return container;
     }
 
     @Getter
