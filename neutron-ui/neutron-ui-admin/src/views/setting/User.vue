@@ -104,9 +104,6 @@ const tableEvent = {
       .then(user => {
         if (user) {
           drawerData.user = user
-          if (drawerData.user.avatar) {
-            drawerData.user.avatar = `${BASE_URL}${drawerData.user.avatar}`
-          }
           drawerData.tenantSelectOptions = [{ value: user.tenant.id!, label: user.tenant.name }]
         }
         drawerData.open = true
@@ -410,7 +407,13 @@ onMounted(() => {
             accept="image/jpeg,image/png"
             :class="{ 'border border-dashed border-(--el-border-color) rounded leading-0': !drawerData.user.avatar }"
           >
-            <el-avatar shape="square" class="size-16" v-if="drawerData.user.avatar" scr :src="drawerData.user.avatar" />
+            <el-avatar
+              shape="square"
+              class="size-16"
+              v-if="drawerData.user.avatar"
+              scr
+              :src="BASE_URL + drawerData.user.avatar"
+            />
             <el-icon v-else class="size-16">
               <i-ep-plus />
             </el-icon>
