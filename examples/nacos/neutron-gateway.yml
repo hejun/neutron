@@ -4,7 +4,7 @@ spring:
       client:
         provider:
           neutron:
-            issuer-uri: "http://localhost:9000"
+            issuer-uri: "http://localhost:10000"
         registration:
           neutron:
             client-id: "neutron"
@@ -32,6 +32,13 @@ spring:
               uri: lb://neutron-notify
               predicates:
                 - Path=/notify/**
+              filters:
+                - StripPrefix=1
+                - TokenRelay=
+            - id: fs
+              uri: lb://neutron-fs
+              predicates:
+                - Path=/fs/**
               filters:
                 - StripPrefix=1
                 - TokenRelay=

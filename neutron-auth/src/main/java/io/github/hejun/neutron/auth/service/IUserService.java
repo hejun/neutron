@@ -2,6 +2,8 @@ package io.github.hejun.neutron.auth.service;
 
 
 import io.github.hejun.neutron.auth.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -12,10 +14,16 @@ import java.util.Optional;
  */
 public interface IUserService {
 
-	Optional<User> findByUsername(String username, Long tenantId);
+    Page<User> findPage(String username, Boolean enabled, Long tenantId, Pageable pageable);
 
-	Optional<User> findById(Long id);
+    Optional<User> findByUsername(String username, Long tenantId);
 
-	User save(User user);
+    Optional<User> findById(Long id);
+
+    User save(User user);
+
+    void update(User user);
+
+    void delete(Long id);
 
 }

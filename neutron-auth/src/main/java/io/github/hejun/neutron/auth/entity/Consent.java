@@ -30,7 +30,7 @@ public class Consent implements Serializable {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("userId")
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", comment = "关联用户")
     private User user;
 
     /**
@@ -38,12 +38,13 @@ public class Consent implements Serializable {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("clientId")
-    @JoinColumn(name = "client_id")
+    @JoinColumn(name = "client_id", comment = "关联租户")
     private Client client;
 
     /**
      * 授权
      */
+    @Column(comment = "授权")
     private String authorities;
 
 }

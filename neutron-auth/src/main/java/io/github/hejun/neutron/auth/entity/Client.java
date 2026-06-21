@@ -32,93 +32,106 @@ public class Client implements Serializable {
      */
     @Id
     @SnowflakeGenerator
+    @Column(nullable = false, comment = "主键")
     private Long id;
 
     /**
      * 客户端ID
      */
-    @Column(nullable = false)
+    @Column(nullable = false, comment = "客户端ID")
     private String clientId;
 
     /**
      * 客户端密钥
      */
+    @Column(comment = "客户端密钥")
     private String clientSecret;
 
     /**
      * 客户端名称
      */
+    @Column(comment = "客户端名称")
     private String clientName;
 
     /**
      * 认证方式
      */
+    @Column(comment = "认证方式")
     private String clientAuthenticationMethods;
 
     /**
      * 授权方式
      */
+    @Column(comment = "授权方式")
     private String authorizationGrantTypes;
 
     /**
      * 跳转链接
      */
+    @Column(comment = "跳转链接")
     private String redirectUris;
 
     /**
      * 登出跳转链接
      */
+    @Column(comment = "登出跳转链接")
     private String postLogoutRedirectUris;
 
     /**
      * 授权域
      */
+    @Column(comment = "授权域")
     private String scopes;
 
     /**
      * 是否开启密码验证(PKCE模式), 0: 否, 1: 是
      */
+    @Column(comment = "是否开启密码验证(PKCE模式), 0: 否, 1: 是")
     private Boolean requireProofKey;
 
     /**
      * 是否需要确认授权, 0: 否, 1: 是
      */
+    @Column(comment = "是否需要确认授权, 0: 否, 1: 是")
     private Boolean requireAuthorizationConsent;
 
     /**
      * AccessToken存活时间,单位: 秒
      */
+    @Column(comment = "AccessToken存活时间,单位: 秒")
     private Integer accessTokenTimeToLive;
 
     /**
      * RefreshToken存活时间,单位: 秒
      */
+    @Column(comment = "RefreshToken存活时间,单位: 秒")
     private Integer refreshTokenTimeToLive;
 
     /**
      * 是否启用, 0: 否, 1: 是. 默认: 1
      */
-    @Column(nullable = false)
+    @Column(nullable = false, comment = "是否启用, 0: 否, 1: 是. 默认: 1")
     private Boolean enabled;
 
     /**
      * 所属租户
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tenant_id", nullable = false)
+    @JoinColumn(name = "tenant_id", nullable = false, comment = "所属租户")
     private Tenant tenant;
 
     /**
      * 创建时间
      */
     @CreatedDate
-    @Column(nullable = false)
+    @Column(nullable = false, comment = "创建时间")
     private Date createdDate;
 
     /**
      * 最后更新时间
      */
     @LastModifiedDate
+    @Column(comment = "最后更新时间")
     private Date lastModifiedDate;
 
     /**

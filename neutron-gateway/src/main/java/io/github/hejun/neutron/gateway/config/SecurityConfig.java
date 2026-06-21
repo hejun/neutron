@@ -46,7 +46,7 @@ public class SecurityConfig {
         http
             .authorizeExchange((exchange) ->
                 exchange
-                    .pathMatchers("/actuator/**", "/*/actuator/**").permitAll()
+                    .pathMatchers("/actuator/**", "/*/actuator/**", "/fs/public/**").permitAll()
                     .anyExchange().authenticated()
             )
             // 暂不处理 CSRF

@@ -4,7 +4,7 @@ neutron:
       resourceserver:
         jwt:
           trusted-issuers:
-            - "http://localhost:9000"
+            - "http://localhost:10000"
 management:
   tracing:
     sampling:

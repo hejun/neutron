@@ -1,4 +1,5 @@
 import 'element-plus/theme-chalk/el-message-box.css'
+import 'element-plus/theme-chalk/el-button.css'
 import { ElMessageBox } from 'element-plus'
 
 const BASE_URL = import.meta.env.VITE_BASE_URL || ''
@@ -34,10 +35,9 @@ async function request<T>(url: string, init?: RequestInit, timeout: number = 500
     if (parsedResp.code === 401) {
       const location = parsedResp.data.location
       await ElMessageBox.alert('您还未登录, 点击按钮开始登录', '需要登录', {
-        confirmButtonText: '去登录',
-        callback: () => {
-          redirect(`${location}?continue=${encodeURIComponent(window.location.href)}`)
-        }
+        confirmButtonText: '去登录'
+      }).then(() => {
+        redirect(`${location}?continue=${encodeURIComponent(window.location.href)}`)
       })
     }
 

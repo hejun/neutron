@@ -200,7 +200,7 @@ databaseChangeLog:
                   remarks: "昵称"
               - column:
                   name: gender
-                  type: bit(1)
+                  type: tinyint(1)
                   remarks: "性别, 1: 男, 2: 女. 默认: 1"
                   constraints:
                     nullable: false

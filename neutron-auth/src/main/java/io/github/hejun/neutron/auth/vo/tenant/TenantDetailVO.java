@@ -1,0 +1,55 @@
+package io.github.hejun.neutron.auth.vo.tenant;
+
+import lombok.Getter;
+import lombok.Setter;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ser.std.ToStringSerializer;
+
+import java.util.Date;
+
+/**
+ * 租户 DetailVO
+ *
+ * @author HeJun
+ */
+@Getter
+@Setter
+public class TenantDetailVO {
+
+    /**
+     * 主键
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+
+    /**
+     * 租户名
+     */
+    private String name;
+
+    /**
+     * 发行域名
+     */
+    private String issuer;
+
+    /**
+     * 版权
+     */
+    private String copyright;
+
+    /**
+     * 是否启用, 0: 否, 1: 是. 默认: 1
+     */
+    private Boolean enabled;
+
+    /**
+     * 创建时间
+     */
+    private Date createdDate;
+
+    /**
+     * 最后更新时间
+     */
+    private Date lastModifiedDate;
+
+}

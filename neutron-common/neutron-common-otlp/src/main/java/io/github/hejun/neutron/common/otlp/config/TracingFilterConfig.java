@@ -84,14 +84,14 @@ public class TracingFilterConfig {
                 @NonNull
                 @Override
                 public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
-                    if (!exchange.getResponse().getHeaders().containsHeader(HEADER_TRACEPARENT)) {
-                        TraceContext context = tracer.currentTraceContext().context();
-                        if (context != null) {
-                            exchange.getResponse().beforeCommit(() -> {
+                    TraceContext context = tracer.currentTraceContext().context();
+                    if (context != null) {
+                        exchange.getResponse().beforeCommit(() -> {
+                            if (!exchange.getResponse().getHeaders().containsHeader(HEADER_TRACEPARENT)) {
                                 exchange.getResponse().getHeaders().add(HEADER_TRACEPARENT, context.traceId());
-                                return Mono.empty();
-                            });
-                        }
+                            }
+                            return Mono.empty();
+                        });
                     }
                     return chain.filter(exchange);
                 }

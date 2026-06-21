@@ -1,16 +1,14 @@
 package io.github.hejun.neutron.auth.exception;
 
-import org.springframework.security.authentication.AccountStatusException;
-
 /**
  * 占用异常
  *
  * @author HeJun
  */
-public class OccupiedException extends AccountStatusException {
+public class OccupiedException extends RuntimeException {
 
-	public OccupiedException(String msg) {
-		super(msg);
-	}
+    public OccupiedException(String msg) {
+        super(msg);
+    }
 
 }

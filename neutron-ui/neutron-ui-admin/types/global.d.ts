@@ -13,7 +13,13 @@ declare global {
     }
   }
 
-  type Result<T = void> = SuccessResult<T> | AccessDeniedResult
+  interface FailResult<T> {
+    code: number
+    msg: string
+    data?: T
+  }
+
+  type Result<T = void> = SuccessResult<T> | AccessDeniedResult | FailResult
 
   interface Page<T> {
     page: {
