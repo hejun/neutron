@@ -1,6 +1,7 @@
 package io.github.hejun.neutron.auth.entity;
 
 import jakarta.persistence.Embeddable;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,16 +15,17 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Embeddable
+@EqualsAndHashCode
 public class UserClientKey implements Serializable {
 
-	/**
-	 * 用户ID
-	 */
-	private Long userId;
+    /**
+     * 用户ID
+     */
+    private Long userId;
 
-	/**
-	 * 客户端ID
-	 */
-	private Long clientId;
+    /**
+     * 客户端ID
+     */
+    private Long clientId;
 
 }

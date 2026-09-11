@@ -1,5 +1,6 @@
 package io.github.hejun.neutron.auth.vo.user;
 
+import io.github.hejun.neutron.auth.constant.Gender;
 import io.github.hejun.neutron.auth.vo.tenant.TenantListVO;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,7 +57,7 @@ public class UserDetailVO {
     /**
      * 性别, 1: 男, 2: 女. 默认: 1
      */
-    private Byte gender;
+    private Gender gender;
 
     /**
      * 头像

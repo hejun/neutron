@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * 授权表
@@ -46,5 +47,17 @@ public class Consent implements Serializable {
      */
     @Column(comment = "授权")
     private String authorities;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Consent consent)) return false;
+        return userClientKey != null && Objects.equals(userClientKey, consent.userClientKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 
 }

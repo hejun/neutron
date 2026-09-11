@@ -8,23 +8,25 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
- * 租户表
+ * 角色表
  *
  * @author HeJun
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "t_tenant", indexes = {
-    @Index(name = "uk_tenant_issuer", columnList = "issuer", unique = true)
+@Table(name = "t_role", indexes = {
+    @Index(name = "uk_role_tenant_id_code", columnList = "tenant_id,code", unique = true),
+    @Index(name = "idx_role_tenant_parent", columnList = "tenant_id,parent_role_id"),
 })
 @EntityListeners(AuditingEntityListener.class)
-public class Tenant implements Serializable {
+public class Role {
 
     /**
      * 主键
@@ -35,40 +37,30 @@ public class Tenant implements Serializable {
     private Long id;
 
     /**
-     * 租户名
+     * 角色代码
      */
-    @Column(nullable = false, comment = "租户名")
+    @Column(nullable = false, comment = "角色代码")
+    private String code;
+
+    /**
+     * 角色名
+     */
+    @Column(nullable = false, comment = "角色名")
     private String name;
 
     /**
-     * 发行域名
+     * 父级角色
      */
-    @Column(nullable = false, comment = "发行域名")
-    private String issuer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_role_id", comment = "父级角色")
+    private Role parentRole;
 
     /**
-     * 公钥
+     * 所属租户
      */
-    @Column(nullable = false, comment = "公钥")
-    private String publicKey;
-
-    /**
-     * 私钥
-     */
-    @Column(nullable = false, comment = "私钥")
-    private String privateKey;
-
-    /**
-     * 版权
-     */
-    @Column(comment = "版权")
-    private String copyright;
-
-    /**
-     * 是否启用, 0: 否, 1: 是. 默认: 1
-     */
-    @Column(nullable = false, comment = "是否启用, 0: 否, 1: 是. 默认: 1")
-    private Boolean enabled;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tenant_id", nullable = false, comment = "所属租户")
+    private Tenant tenant;
 
     /**
      * 创建时间
@@ -84,11 +76,23 @@ public class Tenant implements Serializable {
     @Column(comment = "最后更新时间")
     private Date lastModifiedDate;
 
+    /**
+     * 关联的子角色
+     */
+    @OneToMany(mappedBy = "parentRole", fetch = FetchType.LAZY)
+    private Set<Role> childRoles = new HashSet<>();
+
+    /**
+     * 关联的用户
+     */
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    private Set<User> users = new HashSet<>();
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Tenant tenant)) return false;
-        return id != null && Objects.equals(id, tenant.id);
+        if (!(obj instanceof Role role)) return false;
+        return id != null && Objects.equals(id, role.id);
     }
 
     @Override

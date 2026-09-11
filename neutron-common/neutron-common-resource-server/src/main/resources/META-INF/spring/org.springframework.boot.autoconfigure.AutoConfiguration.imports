@@ -1,1 +1,2 @@
 io.github.hejun.neutron.common.server.resource.config.ResourceSecurityConfig
+io.github.hejun.neutron.common.server.resource.config.AuthorityReporterConfig

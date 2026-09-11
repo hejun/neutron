@@ -10,7 +10,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 客户端表
@@ -21,8 +23,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "t_client", indexes = {
-    @Index(name = "uk_client_client_id_tenant_id", columnList = "client_id,tenant_id", unique = true),
-    @Index(name = "idx_client_tenant_id", columnList = "tenant_id")
+    @Index(name = "uk_client_tenant_id_client_id", columnList = "tenant_id,client_id", unique = true)
 })
 @EntityListeners(AuditingEntityListener.class)
 public class Client implements Serializable {
@@ -124,7 +125,7 @@ public class Client implements Serializable {
      * 创建时间
      */
     @CreatedDate
-    @Column(nullable = false, comment = "创建时间")
+    @Column(nullable = false, updatable = false, comment = "创建时间")
     private Date createdDate;
 
     /**
@@ -138,6 +139,18 @@ public class Client implements Serializable {
      * 关联的授权
      */
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Consent> consent;
+    private Set<Consent> consent = new HashSet<>();
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Client client)) return false;
+        return id != null && Objects.equals(id, client.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 
 }

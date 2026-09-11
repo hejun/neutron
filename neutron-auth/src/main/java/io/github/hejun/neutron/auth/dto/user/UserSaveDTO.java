@@ -1,6 +1,7 @@
 package io.github.hejun.neutron.auth.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.github.hejun.neutron.auth.constant.Gender;
 import io.github.hejun.neutron.auth.dto.tenant.TenantSaveDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,7 +60,7 @@ public class UserSaveDTO {
     /**
      * 性别, 1: 男, 2: 女. 默认: 1
      */
-    private Byte gender;
+    private Gender gender;
 
     /**
      * 头像

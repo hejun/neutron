@@ -7,6 +7,7 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.codec.multipart.FormFieldPart;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -26,11 +27,13 @@ public class FileController {
     private final FileService fileService;
 
     @GetMapping("{*file}")
+    @PreAuthorize("hasAuthority('file:read')")
     public Mono<ResponseEntity<Flux<DataBuffer>>> download(@PathVariable String file) {
         return fileService.download(file);
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('file:write')")
     public Mono<Result<String>> upload(FilePart file,
                                        @RequestPart(required = false) FormFieldPart isPublic,
                                        @RequestPart(required = false) FormFieldPart expireDays) {

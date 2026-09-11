@@ -174,7 +174,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: email
-                  type: varchar(20)
+                  type: varchar(100)
                   remarks: "邮箱"
               - column:
                   name: email_verified
@@ -200,7 +200,7 @@ databaseChangeLog:
                   remarks: "昵称"
               - column:
                   name: gender
-                  type: tinyint(1)
+                  type: tinyint
                   remarks: "性别, 1: 男, 2: 女. 默认: 1"
                   constraints:
                     nullable: false
@@ -248,33 +248,108 @@ databaseChangeLog:
                   remarks: "用户ID"
                   constraints:
                     primaryKey: true
+                    primaryKeyName: pk_consent
+                    nullable: false
               - column:
                   name: client_id
                   type: bigint
                   remarks: "客户端ID"
                   constraints:
                     primaryKey: true
+                    primaryKeyName: pk_consent
+                    nullable: false
               - column:
                   name: authorities
                   type: varchar(1000)
                   remarks: "授权"
+        - createTable:
+            tableName: t_role
+            remarks: "角色"
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: "ID"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: code
+                  type: varchar(20)
+                  remarks: "角色代码"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(20)
+                  remarks: "角色名"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_role_id
+                  type: bigint
+                  remarks: "父级角色ID"
+              - column:
+                  name: tenant_id
+                  type: bigint
+                  remarks: "所属租户ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_date
+                  type: timestamp
+                  remarks: "创建时间"
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+              - column:
+                  name: last_modified_date
+                  type: timestamp
+                  remarks: "最后更新时间"
+                  defaultValueComputed: "NULL ON UPDATE CURRENT_TIMESTAMP"
+        - createTable:
+            tableName: t_user_role
+            remarks: "用户-角色-关联表"
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  remarks: "用户ID"
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_user_role
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: bigint
+                  remarks: "角色ID"
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_user_role
+                    nullable: false
         - createIndex:
-            tableName: t_client
-            indexName: idx_client_tenant_id
+            tableName: t_role
+            indexName: idx_role_tenant_parent_role
             columns:
               - column:
                   name: tenant_id
+              - column:
+                  name: parent_role_id
         - createIndex:
-            tableName: t_user
-            indexName: idx_user_tenant_id
+            tableName: t_user_role
+            indexName: idx_user_role_role_id
             columns:
               - column:
-                  name: tenant_id
+                  name: role_id
         - addUniqueConstraint:
             tableName: t_client
-            constraintName: uk_client_client_id_tenant_id
-            columnNames: client_id, tenant_id
+            constraintName: uk_client_tenant_id_client_id
+            columnNames: tenant_id,client_id
         - addUniqueConstraint:
             tableName: t_user
-            constraintName: uk_user_username_tenant_id
-            columnNames: username, tenant_id
+            constraintName: uk_user_tenant_id_username
+            columnNames: tenant_id, username
+        - addUniqueConstraint:
+            tableName: t_role
+            constraintName: uk_role_tenant_id_code
+            columnNames: tenant_id,code

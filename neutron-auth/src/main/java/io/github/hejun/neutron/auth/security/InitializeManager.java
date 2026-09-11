@@ -1,11 +1,14 @@
 package io.github.hejun.neutron.auth.security;
 
+import io.github.hejun.neutron.auth.constant.Gender;
 import io.github.hejun.neutron.auth.entity.Client;
+import io.github.hejun.neutron.auth.entity.Role;
 import io.github.hejun.neutron.auth.entity.Tenant;
 import io.github.hejun.neutron.auth.entity.User;
 import io.github.hejun.neutron.auth.properties.InitProperties;
 import io.github.hejun.neutron.auth.repository.TenantRepository;
 import io.github.hejun.neutron.auth.service.IClientService;
+import io.github.hejun.neutron.auth.service.IRoleService;
 import io.github.hejun.neutron.auth.service.ITenantService;
 import io.github.hejun.neutron.auth.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 初始化
@@ -41,6 +45,7 @@ public class InitializeManager implements ApplicationRunner {
     private final ITenantService tenantService;
     private final IClientService clientService;
     private final IUserService userService;
+    private final IRoleService roleService;
 
 
     @Override
@@ -89,11 +94,18 @@ public class InitializeManager implements ApplicationRunner {
             client.setTenant(tenant);
             clientService.save(client);
 
+            Role role = new Role();
+            role.setCode("ROLE_ADMIN");
+            role.setName("管理员");
+            role.setTenant(tenant);
+            roleService.save(role);
+
             User user = new User();
             user.setUsername(initProperties.user().username());
             user.setPassword(initProperties.user().password());
             user.setNickname(initProperties.user().nickname());
-            user.setGender((byte) 1);
+            user.setGender(Gender.MALE);
+            user.setRoles(Set.of(role));
             user.setTenant(tenant);
             userService.save(user);
         }

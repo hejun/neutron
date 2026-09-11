@@ -1,5 +1,6 @@
 package io.github.hejun.neutron.auth.entity;
 
+import io.github.hejun.neutron.auth.constant.Gender;
 import io.github.hejun.neutron.common.persist.annotation.SnowflakeGenerator;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,7 +11,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 用户表
@@ -21,8 +24,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "t_user", indexes = {
-    @Index(name = "uk_user_username_tenant_id", columnList = "username,tenant_id", unique = true),
-    @Index(name = "idx_user_tenant_id", columnList = "tenant_id")
+    @Index(name = "uk_user_tenant_id_username", columnList = "tenant_id,username", unique = true)
 })
 @EntityListeners(AuditingEntityListener.class)
 public class User implements Serializable {
@@ -81,7 +83,7 @@ public class User implements Serializable {
      * 性别, 1: 男, 2: 女. 默认: 1
      */
     @Column(nullable = false, comment = "性别, 1: 男, 2: 女. 默认: 1")
-    private Byte gender;
+    private Gender gender;
 
     /**
      * 头像
@@ -112,7 +114,7 @@ public class User implements Serializable {
      * 创建时间
      */
     @CreatedDate
-    @Column(nullable = false, comment = "创建时间")
+    @Column(nullable = false, updatable = false, comment = "创建时间")
     private Date createdDate;
 
     /**
@@ -126,6 +128,32 @@ public class User implements Serializable {
      * 关联的授权
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Consent> consent;
+    private Set<Consent> consent = new HashSet<>();
+
+    /**
+     * 关联的角色
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "t_user_role",
+        // 这个索引是为了通过 roleId 反向查询的时候使用
+        indexes = {@Index(name = "idx_user_role_role_id", columnList = "role_id")},
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof User user)) return false;
+        return id != null && Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 
 }

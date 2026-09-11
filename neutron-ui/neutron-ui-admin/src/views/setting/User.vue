@@ -412,7 +412,7 @@ onMounted(() => {
               class="size-16"
               v-if="drawerData.user.avatar"
               scr
-              :src="BASE_URL + drawerData.user.avatar"
+              :src="(drawerData.user.avatar.startsWith('blob') ? '' : BASE_URL) + drawerData.user.avatar"
             />
             <el-icon v-else class="size-16">
               <i-ep-plus />
