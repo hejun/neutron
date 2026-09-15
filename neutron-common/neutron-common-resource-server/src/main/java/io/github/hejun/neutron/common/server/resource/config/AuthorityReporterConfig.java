@@ -1,27 +1,7 @@
 package io.github.hejun.neutron.common.server.resource.config;
 
-import io.github.hejun.neutron.common.server.resource.service.AuthorityReportService;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 资源上报配置
@@ -32,6 +12,7 @@ import java.util.regex.Pattern;
 @Configuration(proxyBeanMethods = false)
 public class AuthorityReporterConfig {
 
+    /*
     private static final Pattern AUTHORITY_PATTERN = Pattern.compile("has(?:Any)?Authority\\(([^)]+)\\)");
     private static final Pattern CODE_PATTERN = Pattern.compile("'([^']+)'");
 
@@ -158,5 +139,6 @@ public class AuthorityReporterConfig {
 
         return codes;
     }
+     */
 
 }
