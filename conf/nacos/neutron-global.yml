@@ -1,0 +1,30 @@
+server:
+  forward-headers-strategy: framework
+spring:
+  reactor:
+    context-propagation: auto
+  jackson:
+    time-zone: GMT+8
+    date-format: "yyyy-MM-dd HH:mm"
+  threads:
+    virtual:
+      enabled: true
+management:
+  tracing:
+    sampling:
+      probability: 0.1
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://127.0.0.1:4317
+          transport: grpc
+    logging:
+      export:
+        otlp:
+          endpoint: http://127.0.0.1:4317
+          transport: grpc
+  otlp:
+    metrics:
+      export:
+        url: http://127.0.0.1:4318/v1/metrics

@@ -1,0 +1,30 @@
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          neutron:
+            issuer-uri: "http://localhost:10000"
+        registration:
+          neutron:
+            client-id: "neutron"
+            client-secret: "neutron"
+            client-name: "Neutron"
+            client-authentication-method: "client_secret_basic"
+            authorization-grant-type: "authorization_code"
+            redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
+            scope:
+              - "openid"
+              - "profile"
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: auth
+              uri: lb://neutron-auth
+              predicates:
+                - Path=/auth/**
+              filters:
+                - StripPrefix=1
+                - TokenRelay=
